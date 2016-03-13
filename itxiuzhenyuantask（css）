@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css" media="screen">
+        div ul{
+            height: 300px;
+            width: 300px;
+        }
+        li{
+            height: 92px;
+            width: 92px;
+            margin: 0 5px 5px 0;
+            background-color: #ff6700;
+            border-radius: 20px;
+            list-style: none;
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+</body>
+</html>
