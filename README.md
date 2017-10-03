@@ -1,3 +1,2 @@
 # itschool
-this is some tasks in itschool by mike;
-only this; sure!
+this item as a file for sanso's api
