@@ -1,0 +1,42 @@
+{
+	"appenders": {
+		"success":{
+			"type": "file",
+			"filename": "../logs/success.log"
+		},
+		"chat":{
+			"type": "file",
+			"filename": "../logs/chat.log"
+		},
+		"group":{
+			"type": "file",
+			"filename": "../logs/group.log"
+		},
+		"error":{
+			"type": "file",
+			"filename": "../logs/error.log"
+		}
+	},
+	"categories":{
+		"default":{
+			"appenders": ["success"],
+			"level": "trace"
+		},
+		"success": {
+			"appenders": ["success"],
+			"level": "trace"
+		},
+		"chat": {
+			"appenders": ["chat"],
+			"level": "trace"
+		},
+		"group": {
+			"appenders": ["group"],
+			"level": "trace"
+		},
+		"error": {
+			"appenders": ["error"],
+			"level": "error"
+		}
+	}
+}
