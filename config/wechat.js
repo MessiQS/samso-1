@@ -13,8 +13,8 @@ function getWechatPayParams(props){
 				partnerid:props.mch_id,
 				prepayid:props.prepay_id,
 				noncestr:getUid(),
-				timestamp:parseInt(new Date().getTime()/1000,10),
-				package:"Sign=WXPay"
+				timestamp:parseInt(new Date().getTime()/1000,10).toString(),
+				package:"Sign\=WXPay"
 			};
 	wechat.sign = getWechatSign(wechat);
 	return wechat;

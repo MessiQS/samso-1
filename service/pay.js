@@ -18,7 +18,7 @@ async function wechatPay(ctx, next) {
 		  attach = ctx.request.body.attach || '',//购买的详细信息
 		  total_fee = ctx.request.body.total_fee,//价格
 		  user_ip = ctx.request.body.user_ip || ''; //ip地址
-	let isValid = true;
+	let isValid = true,
 		invalidData;//输入是否合法
 	if(!user_id){
 		isValid = false;
@@ -46,17 +46,17 @@ async function wechatPay(ctx, next) {
 		total_fee,
 		attach
 	});
-	wechatPost(wechatUrl, params, fromWechat)
-
-	function fromWechat(props) {
-		for (let key in props) {
-			if (Array.isArray(props[key]))
-				props[key] = props[key][0];
-		};
-		let wechatPayObject = getWechatPayParams(props);
-		ctx.request.body = {
-			'type': true,
-			'data': wechatPayObject
-		}
+	const props = await wechatPost(wechatUrl, params);
+	console.log(props);
+	for (let key in props) {
+		if (Array.isArray(props[key]))
+			props[key] = props[key][0];
+	};
+	let wechatPayObject = getWechatPayParams(props);
+	console.log(wechatPayObject)
+	ctx.response.body = {
+		"type":true,
+		"data": wechatPayObject
 	}
+
 }

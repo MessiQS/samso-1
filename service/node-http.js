@@ -11,26 +11,29 @@ module.exports = {
 		wechatPost: wechatPost
 	}
 	//微信支付
-function wechatPost(url, params, callback) {
+function wechatPost(url, params) {
 	const postData = parseObjectToXML(params, 'xml');
-	request({
-		url:url,
-		method:"POST",
-		body:postData
-	},function(error, response, body){
-		if(response.body){
-			let res = response.toJSON();
-			parseString(res.body,(errors,result) => {
-				if(null !== errors ){  
-					console.log(errors)
-					return;
-				};
-				callback(result.xml)
-			})
-		}else{
-			console.log(error)
-		}
+	return new Promise( (resolve,reject) => {
+		request({
+			url:url,
+			method:"POST",
+			body:postData
+		},function(error, response, body){
+			if(response.body){
+				let res = response.toJSON();
+				parseString(res.body,(errors,result) => {
+					if(null !== errors ){  
+						console.log(errors)
+						return;
+					};
+					resolve(result.xml)
+				})
+			}else{
+				console.log(error)
+			}
+		})
 	})
+
 }
 
 function POST(urlObj, params, callback) {
