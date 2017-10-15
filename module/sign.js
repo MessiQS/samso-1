@@ -83,7 +83,6 @@ class Sign {
 		data = {
 			name: account,
 			account: account,
-			phone: phone,
 			password: password, //MD5加密密码
 			user_id: new Date().getTime()
 		};
