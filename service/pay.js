@@ -47,16 +47,13 @@ async function wechatPay(ctx, next) {
 		attach
 	});
 	const props = await wechatPost(wechatUrl, params);
-	console.log(props);
 	for (let key in props) {
 		if (Array.isArray(props[key]))
 			props[key] = props[key][0];
 	};
-	let wechatPayObject = getWechatPayParams(props);
-	console.log(wechatPayObject)
 	ctx.response.body = {
 		"type":true,
-		"data": wechatPayObject
+		"data": props
 	}
 
 }

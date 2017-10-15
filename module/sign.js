@@ -5,13 +5,13 @@ const {
 //链接数据库的类
 const {
 	sqlFormat
-} = require('./connect');
+} = require('../service/connect');
 const {
 	selectFromSql,
 	insertToSql,
 	updateToSql
 } = new sqlFormat();
-class sign {
+class Sign {
 	//登录
 	static async login(ctx, next) {
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
@@ -275,4 +275,4 @@ function getUid() {
     }
     return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
 }
-module.exports = sign
+module.exports = Sign

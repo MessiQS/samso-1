@@ -1,5 +1,5 @@
 const mysql = require('mysql');
-const addLog = require('./serverLog').addLog;
+const addLog = require('../serverLog').addLog;
 
 //负责读取文件与链接
 const pool = mysql.createPool({

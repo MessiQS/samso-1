@@ -9,14 +9,15 @@ module.exports = {
 //获取支付字段
 function getWechatPayParams(props){
 	let wechat = {
-				appid:props.appid,
-				partnerid:props.mch_id,
-				prepayid:props.prepay_id,
-				noncestr:getUid(),
-				timestamp:parseInt(new Date().getTime()/1000,10).toString(),
-				package:"Sign\=WXPay"
+				appId:props.appid,
+				partnerId:props.mch_id,
+				prepayId:props.prepay_id,
+				nonceStr:getUid(),
+				timeStamp:parseInt(new Date().getTime()/1000,10).toString(),
+				package:"Sign=WXPay"
 			};
 	wechat.sign = getWechatSign(wechat);
+	console.log(wechat);
 	return wechat;
 }
 
