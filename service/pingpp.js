@@ -6,7 +6,7 @@ const pingpp = require('pingpp')(test_key);
 const privateUrl = path.resolve(__dirname, "../../bin/private_key.pem")
 
 console.log(privateUrl )
-pingpp.setPrivateKey(privateUrl);
+pingpp.setPrivateKeyPath(privateUrl);
 class Pingpay {
     static async createCharge(ctx,next) {
         const { client_ip, amount, channel ,subject,body} = {
