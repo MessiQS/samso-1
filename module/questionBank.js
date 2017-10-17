@@ -10,7 +10,7 @@ const {
 	updateToSql
 } = new sqlFormat();
 const { checkToken } = require('../service/check');
-const { getProvince } = require('./global');
+const { getProvince,provinceObj } = require('./global');
 
 class QuestionBank {
 	static async getPaper(ctx, next) {
@@ -23,7 +23,7 @@ class QuestionBank {
 			}
 			return;
 		};
-		if (!paperId || !province[paperId]) {
+		if (!paperId || !provinceObj[paperId]) {
 			ctx.response.body = {
 				type: 'false',
 				data: '试卷id错误'
@@ -31,7 +31,7 @@ class QuestionBank {
 			return;
 		}
 		const questionArray = await selectFromSql('question_banks', {
-			'FIND_IN_SET': '("' + province[paperId] + '",`title`)'
+			'FIND_IN_SET': '("' + provinceObj[paperId] + '",`title`)'
 		});
 		if (!questionArray) {
 			ctx.response.body = {

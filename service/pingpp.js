@@ -1,5 +1,5 @@
 const path = require('path')
-const { pingpp_app_id, test_key } = require('../../bin/config');
+const { pingpp_app_id, test_key ,live_key} = require('../../bin/config');
 const moment = require('moment');
 const pingpp = require('pingpp')(test_key);
 
@@ -9,13 +9,7 @@ console.log(privateUrl )
 pingpp.setPrivateKeyPath(privateUrl);
 class Pingpay {
     static async createCharge(ctx,next) {
-        const { client_ip, amount, channel ,subject,body} = {
-            client_ip:"192.168.0.103",
-            amount:'100',
-            channel:'alipay',
-            subject:'ss0001',
-            body:"1234"
-        }
+        const { client_ip, amount, channel ,subject,body} = ctx.request.body;
         // ctx.request.body;
         /*
         *   charge参数说明

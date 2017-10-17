@@ -9,7 +9,9 @@ const {
 let code = {
 
 };
+let provinceObj = {
 
+};
 async function getProvince(){
 	const nameArr = await getSql('select distinct title from question_banks'),
 	sskey = 'SP00000',
@@ -23,6 +25,7 @@ async function getProvince(){
 		valueToId[res.title] = key;
 		idToValue[key] = res.title;
 	});
+	provinceObj = idToValue;
 	return {
 		provinceObj:idToValue,
 		getCitysKey:valueToId,
@@ -32,4 +35,5 @@ async function getProvince(){
 module.exports = {
 	codeObj:code,
 	getProvince:getProvince,//获取城市，试卷名相关信息
+	provinceObj:provinceObj,//id与城市的对应
 }
