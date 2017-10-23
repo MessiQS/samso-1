@@ -10,12 +10,14 @@ const {
 	updateToSql
 } = new sqlFormat();
 const { checkToken } = require('../service/check');
-const { getProvince,provinceObj } = require('./global');
+const { getProvince,provinceObj,provinceCache } = require('./global');
 
 class QuestionBank {
 	static async getPaper(ctx, next) {
 		const { account, token, paperId } = ctx.query;
 		const isValid = await checkToken(account, token);
+		const provinceObjectCache =await provinceCache();
+		
 		if (!isValid) {
 			ctx.response.body = {
 				type: 'false',
@@ -23,7 +25,7 @@ class QuestionBank {
 			}
 			return;
 		};
-		if (!paperId || !provinceObj[paperId]) {
+		if (!paperId || !provinceObjectCache[paperId]) {
 			ctx.response.body = {
 				type: 'false',
 				data: '试卷id错误'
@@ -31,7 +33,7 @@ class QuestionBank {
 			return;
 		}
 		const questionArray = await selectFromSql('question_banks', {
-			'FIND_IN_SET': '("' + provinceObj[paperId] + '",`title`)'
+			'FIND_IN_SET': '("' + provinceObjectCache[paperId] + '",`title`)'
 		});
 		if (!questionArray) {
 			ctx.response.body = {

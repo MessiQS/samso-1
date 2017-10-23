@@ -32,8 +32,24 @@ async function getProvince(){
 		paperNameArray:nameArr //所有试卷的集合
 	}
 }
+async function provinceCache(){
+	if(Object.keys(provinceObj).length === 0){
+		const sskey = 'SP00000',
+			nameArr = await getSql('select distinct title from question_banks');
+		nameArr.forEach((res, index) => {
+			index = index + 1;
+			let len = index.toString().length,
+				key = sskey.slice(0, 7 - len) + index.toString();
+			provinceObj[key] = res.title;
+		});
+		return provinceObj;
+	}else{
+		return provinceObj;
+	}
+}
 module.exports = {
 	codeObj:code,
 	getProvince:getProvince,//获取城市，试卷名相关信息
 	provinceObj:provinceObj,//id与城市的对应
+	provinceCache:provinceCache,//缓存城市
 }
