@@ -250,7 +250,6 @@ class Sign {
 		};
 		const isSuccess = await updateToSql('user',{
 			"account": account,
-			"phone":account
 		},{
 			"account": "= " + oldAccount
 		});
