@@ -59,7 +59,6 @@ class Sign {
 			data;
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
 			password = ctx.request.body.password || '', //密码
-			phone = ctx.request.body.phone || '', //电话号码
 			vericode = ctx.request.body.vericode || ''; //验证码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
@@ -152,7 +151,6 @@ class Sign {
 		}
 		data = {
 			account: account,
-			phone: account,
 			password: password,
 		};
 		await updateToSql('user', data, {
