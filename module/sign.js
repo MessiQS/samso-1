@@ -32,18 +32,18 @@ class Sign {
 				};
 			} else {
 				let uid = getUid();
-				let uodatesql = await updateToSql('user',{
-					token:uid
-				},{
-					"account": "= " + account
-				});
-				if(uodatesql){
+				let uodatesql = await updateToSql('user', {
+					token: uid
+				}, {
+						"account": "= " + account
+					});
+				if (uodatesql) {
 					ctx.response.body = {
 						'type': true,
 						'data': '登录成功',
 						'token': uid
 					};
-				}else{
+				} else {
 					ctx.response.body = {
 						'type': false,
 						'data': '登录失败请重试'
@@ -94,81 +94,81 @@ class Sign {
 	};
 	//验证码
 	static async getCode(ctx, next) {
-			const account = ctx.request.body.account,
-				phoneNumberReg = new RegExp(/^1(3|4|5|7|8)\d{9}$/);
-			if (!account) {
-				ctx.response.body = {
-					type: false,
-					data: '请输入手机号'
-				};
-				return;
-			} else if (!phoneNumberReg.test(account)) {
-				ctx.response.body = {
-					type: false,
-					data: '请输入正确的手机号'
-				};
-				return;
-			};
-			//检测是否已经注册
-			const selectAccount = await selectFromSql('user', {
-				"account": "= " + account
-			});
-			let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
-			codeObj[account] = code;
+		const account = ctx.request.body.account,
+			phoneNumberReg = new RegExp(/^1(3|4|5|7|8)\d{9}$/);
+		if (!account) {
 			ctx.response.body = {
-				type: true,
-				data: code
+				type: false,
+				data: '请输入手机号'
 			};
-			setTimeout(() => {
-				if (codeObj[account] === code) {
-					delete codeObj[account];
-				};
-			}, 60 * 1000)
-		}
-		//忘记密码，修改密码
+			return;
+		} else if (!phoneNumberReg.test(account)) {
+			ctx.response.body = {
+				type: false,
+				data: '请输入正确的手机号'
+			};
+			return;
+		};
+		//检测是否已经注册
+		const selectAccount = await selectFromSql('user', {
+			"account": "= " + account
+		});
+		let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
+		codeObj[account] = code;
+		ctx.response.body = {
+			type: true,
+			data: code
+		};
+		setTimeout(() => {
+			if (codeObj[account] === code) {
+				delete codeObj[account];
+			};
+		}, 60 * 1000)
+	}
+	//忘记密码，修改密码
 	static async updatePassword(ctx, next) {
-			let data;
-			const account = ctx.request.body.account || '', //账号，一般为电话号码,
-				  oldPassword = ctx.request.body.oldPassword || '',//旧密码，存在就比较
-				  password = ctx.request.body.password || ''; //新密码
-			//检测是否已经注册
-			const selectAccount = await selectFromSql('user', {
-				"account": "= " + account
-			});
-			if (!selectAccount && !Array.isArray(selectAccount) && !selectAccount[0]) {
-				ctx.response.body = {
-					"type": false,
-					"data": '此账号未注册',
-				};
-				return;
-			};
-			//检测验证码
-			if (oldPassword && selectAccount[0].password !== oldPassword) {
-				ctx.response.body = {
-					"type": false,
-					"data": '原密码不正确',
-				};				 
-				return;
-			}
-			data = {
-				account: account,
-				phone: account,
-				password: password, 
-			};
-			await updateToSql('user', data, {
-				"account": "= " + account
-			}).catch( res => {
-				ctx.response.body = {
-					"type": false,
-					"data": '发生错误，请重试',
-				};
-			});
+		let data;
+		const account = ctx.request.body.account || '', //账号，一般为电话号码,
+			oldPassword = ctx.request.body.oldPassword || '',//旧密码，存在就比较
+			password = ctx.request.body.password || ''; //新密码
+		//检测是否已经注册
+		const selectAccount = await selectFromSql('user', {
+			"account": "= " + account
+		});
+		if (!selectAccount || !Array.isArray(selectAccount) || !selectAccount[0]) {
 			ctx.response.body = {
-				"type": true,
-				"data": '修改密码成功',
+				"type": false,
+				"data": '此账号未注册',
 			};
+			return;
+		};
+		//检测验证码
+		if (oldPassword && selectAccount[0].password !== oldPassword) {
+			ctx.response.body = {
+				"type": false,
+				"data": '原密码不正确',
+			};
+			return;
 		}
-		//审核验证码
+		data = {
+			account: account,
+			phone: account,
+			password: password,
+		};
+		await updateToSql('user', data, {
+			"account": "= " + account
+		}).catch(res => {
+			ctx.response.body = {
+				"type": false,
+				"data": '发生错误，请重试',
+			};
+		});
+		ctx.response.body = {
+			"type": true,
+			"data": '修改密码成功',
+		};
+	}
+	//审核验证码
 	static async checkCode(ctx, next) {
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
 			vericode = ctx.request.body.vericode || ''; //验证码
@@ -179,7 +179,7 @@ class Sign {
 				"data": '验证码不正确',
 			};
 			return;
-		}else{
+		} else {
 			ctx.response.body = {
 				"type": true,
 				"data": '验证码正确',
@@ -187,7 +187,7 @@ class Sign {
 		}
 	}
 	//进入时检测token
-	static async checkToken(ctx,next){
+	static async checkToken(ctx, next) {
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
 			accountToken = ctx.request.body.accountToken || ''; //验证码
 		//检测是否已经注册
@@ -201,12 +201,12 @@ class Sign {
 			};
 			return;
 		};
-		if(selectAccount[0].token === accountToken){
+		if (selectAccount[0].token === accountToken) {
 			ctx.response.body = {
 				"type": true,
 				"data": '验证成功',
 			};
-		}else{
+		} else {
 			ctx.response.body = {
 				"type": false,
 				"data": '验证失败',
@@ -214,30 +214,30 @@ class Sign {
 		}
 	}
 	//改手机号时候用于验证账号密码的
-	static async checkPassword(ctx,next){
+	static async checkPassword(ctx, next) {
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
 			password = ctx.request.body.password || ''; //密码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
 			"account": "= " + account
 		});
-		if(selectAccount[0].password === password){
+		if (selectAccount[0].password === password) {
 			ctx.response.body = {
-				"type":true,
-				"data":"验证成功"
+				"type": true,
+				"data": "验证成功"
 			}
-		}else{
+		} else {
 			ctx.response.body = {
-				"type":false,
-				"data":"验证失败"
+				"type": false,
+				"data": "验证失败"
 			}
 		}
 	}
 	//更改手机号
-	static async updatePhone(ctx,next){
+	static async updatePhone(ctx, next) {
 		const account = ctx.request.body.account || '', //要变更的账号
 			oldAccount = ctx.request.body.oldAccount || ''; //原密码
-				//检测是否已经注册
+		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
 			"account": "= " + oldAccount
 		});
@@ -248,17 +248,17 @@ class Sign {
 			};
 			return;
 		};
-		const isSuccess = await updateToSql('user',{
+		const isSuccess = await updateToSql('user', {
 			"account": account,
-		},{
-			"account": "= " + oldAccount
-		});
-		if(isSuccess){
+		}, {
+				"account": "= " + oldAccount
+			});
+		if (isSuccess) {
 			ctx.response.body = {
 				"type": true,
 				"data": "账号变更成功",
 			};
-		}else{
+		} else {
 			ctx.response.body = {
 				"type": false,
 				"data": "账号变更失败",
@@ -268,9 +268,9 @@ class Sign {
 }
 
 function getUid() {
-    function S4() {
-       return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
-    }
-    return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
+	function S4() {
+		return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+	}
+	return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
 }
 module.exports = Sign
