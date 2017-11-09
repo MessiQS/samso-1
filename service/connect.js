@@ -1,12 +1,13 @@
 const mysql = require('mysql');
 const addLog = require('../serverLog').addLog;
+const mysqlConfig = require('../../bin/mysql.config.js');
 
 //负责读取文件与链接
 const pool = mysql.createPool({
     host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'sanso',
+    user: mysqlConfig.user,
+    password: mysqlConfig.password,
+    database: mysqlConfig.database,
     port: '3306',
     connectionLimit: 5000
 });
