@@ -192,7 +192,7 @@ class Sign {
 		const selectAccount = await selectFromSql('user', {
 			"account": "= " + account
 		});
-		if (!selectAccount && !Array.isArray(selectAccount) && !selectAccount[0]) {
+		if (!selectAccount || !Array.isArray(selectAccount) || !selectAccount[0]) {
 			ctx.response.body = {
 				"type": false,
 				"data": '此账号未注册',
@@ -200,9 +200,14 @@ class Sign {
 			return;
 		};
 		if (selectAccount[0].token === accountToken) {
+			let userInfo;
+			if(selectAccount[0].data_info){
+				userInfo = JSON.parse(selectAccount[0].data_info);
+			}
 			ctx.response.body = {
 				"type": true,
 				"data": '验证成功',
+				userInfo
 			};
 		} else {
 			ctx.response.body = {
