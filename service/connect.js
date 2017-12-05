@@ -4,11 +4,11 @@ const mysqlConfig = require('../../bin/mysql.config.js');
 
 //负责读取文件与链接
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: mysqlConfig.host,
     user: mysqlConfig.user,
     password: mysqlConfig.password,
     database: mysqlConfig.database,
-    port: '3306',
+    port: mysqlConfig.port,
     connectionLimit: 5000
 });
 
