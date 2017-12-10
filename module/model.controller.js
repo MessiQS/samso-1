@@ -10,8 +10,8 @@ module.exports = {
     detail:{
         bankname{
             qname:{
-                success:int,
-                error:int
+                right:int,
+                wrong:int
             }
         }
     }
@@ -36,14 +36,14 @@ async function updateDataModel(data) {
         for (let qname of detail[key]) {
             if (!cellDeatil[key][qname]) {
                 cellDeatil[key][qname] = {
-                    success: detail[key]['success'],
-                    error: detail[key]['error']
+                    right: detail[key]['right'],
+                    wrong: detail[key]['wrong']
                 };
             } else {
-                if (detail[key]['type'] === "success") {
-                    cellDeatil[key][qname]["success"] += detail[key]['success'];
+                if (detail[key]['type'] === "right") {
+                    cellDeatil[key][qname]["right"] += detail[key]['right'];
                 } else {
-                    cellDeatil[key][qname]["error"] += detail[key]['error'];
+                    cellDeatil[key][qname]["wrong"] += detail[key]['wrong'];
                 }
             }
 
@@ -66,8 +66,8 @@ async function updateDataModel(data) {
 /*
     detail:{
         qname:{
-            success:int,
-            error:int
+            right:int,
+            wrong:int
         }
     }
 */
@@ -86,17 +86,17 @@ async function updateBankModel(data) {
     for (let qname of detail) {
         if (!cellDeatil[qname]) {
             cellDeatil[qname] = {
-                success: detail['success'],
-                error: detail['error'],
-                score: detail['score']
+                right: detail['right'],
+                wrong: detail['wrong'],
+                wrighted: detail['wrighted']
             };
         } else {
-            if (detail[key]['type'] === "success") {
-                cellDeatil[qname]["success"] += detail['success'];
+            if (detail[key]['type'] === "right") {
+                cellDeatil[qname]["right"] += detail['right'];
             } else {
-                cellDeatil[qname]["error"] += detail['error'];
+                cellDeatil[qname]["wrong"] += detail['wrong'];
             }
-            cellDeatil['score'] += detail['score']
+            cellDeatil['wrighted'] += detail['wrighted']
         }
 
     }
@@ -182,5 +182,52 @@ async function getOldBankModel({ user_id, bankname }) {
             error: true,
             source
         };
+    }
+}
+
+function dealWithData(copyGlobalData) {
+    let dataModel = [],
+        dataBank = [];
+    const useridAndBankname = [];//用来限制datamodel去重
+    const useridAndDate = [];//用来限制dataBank去重
+    copyGlobalData.forEach(res => {
+        const { user_id, bankname, qname } = res;
+        //datamodel 
+        const idDataIndex = useridAndDate.indexOf(user_id);
+        if (idDataIndex < 0) {
+            useridAndDate.push(user_id)
+            let dataModelDetail = {
+                user_id,
+                detail: {}
+            }
+            dataModelDetail["detail"][bankname] = dataModelDetail["detail"][bankname] || {}
+            dataModelDetail["detail"][bankname][qname] = res;
+            dataModel.push(dataModelDetail)
+        } else {
+            let dataModelDetail = dataModel[idDataIndex]
+            dataModelDetail["detail"][bankname] = dataModelDetail["detail"][bankname] || {}
+            dataModelDetail["detail"][bankname][qname] = res;
+        }
+        //bankmodel
+        const idAndBankname = `${user_id}_${bankname}`;
+        const idBankIndex = useridAndBankname.indexOf(idAndBankname);
+        if (idBankIndex < 0) {
+            useridAndBankname.push(idAndBankname);
+            let dataBankDetail = {
+                user_id,
+                bankname,
+                detail: {
+                    "qname": res
+                }
+            }
+            dataBank.push(dataBankDetail);
+        } else {
+            let dataBankDetail = dataBank[idBankIndex];
+            dataBankDetail.detail["qname"] = res;
+        }
+    })
+    return {
+        dataModel,
+        dataBank
     }
 }

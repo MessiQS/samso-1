@@ -38,10 +38,13 @@ class Sign {
 						"account": "= " + account
 					});
 				if (uodatesql) {
+					let userInfo;
+					userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
 					ctx.response.body = {
 						'type': true,
 						'data': '登录成功',
-						'token': uid
+						'token': uid,
+						userInfo
 					};
 				} else {
 					ctx.response.body = {
@@ -201,7 +204,7 @@ class Sign {
 		};
 		if (selectAccount[0].token === accountToken) {
 			let userInfo;
-			if(selectAccount[0].data_info){
+			if (selectAccount[0].data_info) {
 				userInfo = JSON.parse(selectAccount[0].data_info);
 			}
 			ctx.response.body = {
