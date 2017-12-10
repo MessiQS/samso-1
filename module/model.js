@@ -15,7 +15,7 @@ const moment = require('moment')
 
 const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel } = require('./model.controller')
 
-export default class QuesrtionModel {
+class QuesrtionModel {
     //获取用户刷题情况
     static async getUserQuestionInfo(user_id) {
         /*
@@ -43,9 +43,46 @@ export default class QuesrtionModel {
         updateDataModel(data)
         updateBankModel(data)
     }
+    static async getUserBuyInfo(data) {
+        //更新用户购买情况
+        const { user_id, bankname } = data;
+        const selectAccount = await selectFromSql('user', {
+            "user_id": "= " + user_id
+        });
+        try {
+            let { data_info } = selectAccount[0]
+            if (!data_info) {
+                data_info = []
+            }
+            return data_info;
+        } catch (e) {
+            return e;
+        }
+
+    }
     static async updateUserBuyInfo(data) {
         //更新用户购买情况
         const { user_id, bankname } = data;
+        const selectAccount = await selectFromSql('user', {
+            "user_id": "= " + user_id
+        });
+        let { data_info } = selectAccount[0]
+        data_info = data_info ? JSON.parse(data_info) : []
+        if (data_info.indexOf(bankname) < 0) {
+            data_info.push(bankname)
+        }
+        try {
+            await updateToSql('user', {
+                data_info: JSON.stringify(data_info)
+            }, {
+                    "user_id": ` = ${user_id}`,
+                })
+            return true;
+        } catch (err) {
+            return false;
+        }
+
     }
 }
 
+module.exports = QuesrtionModel
