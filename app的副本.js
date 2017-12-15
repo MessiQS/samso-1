@@ -29,6 +29,10 @@ const {
     getUpdateInfoCache,
     getUserQuestionInfo
 } = require('./sanso/module/model')
+
+const {
+    feedback
+} = require('./sanso/module/customerServer')
 //支付
 // const {
 //     wechatPay
@@ -86,7 +90,9 @@ router
     //刷题之后的更新
     .post('/api/getUpdateInfoCache', getUpdateInfoCache)
     //获取用户刷题情况
-    .get('./api/getUserQuestionInfo', getUserQuestionInfo)
+    .get('/api/getUserQuestionInfo', getUserQuestionInfo)
+    //用户反馈信息
+    .post('/api/feedback', feedback)
 
 intevalUpdateQuestionInfo();
 
