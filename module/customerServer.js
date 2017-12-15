@@ -12,3 +12,4 @@ class CustomerService {
         ctx.response.body = result
     }
 }
+module.exports = CustomerService
