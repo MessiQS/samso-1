@@ -14,8 +14,8 @@ const {
 class Sign {
 	//登录
 	static async login(ctx, next) {
-		const account = ctx.request.body.account || '', //账号，一般为电话号码
-			password = ctx.request.body.password || ''; //密码
+		const { account, password } = ctx.request.body;
+		console.log(account, password)
 		let row = await selectFromSql('user', {
 			'account': "= " + account
 		});

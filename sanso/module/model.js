@@ -14,6 +14,8 @@ const {
 } = new sqlFormat();
 const moment = require('moment')
 
+const Check = require('../service/check')
+
 const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
 
 class QuesrtionModel {
@@ -95,10 +97,17 @@ class QuesrtionModel {
         })
     }
 
-    static async getUserBuyInfo(ctx,next) {
-        const data = ctx.request.body;
+    static async getUserBuyInfo(ctx, next) {
+        const { user_id } = ctx.request.body;
+        const isValid = Check.checkHeader(ctx.request, user_id)
+        if (!isValid){
+            ctx.response.body = {
+                "type": false,
+                "data": "没有权限",
+            };
+            return ;
+        }
         //更新用户购买情况
-        const { user_id } = data;
         const selectAccount = await selectFromSql('user', {
             "user_id": "= " + user_id
         });
