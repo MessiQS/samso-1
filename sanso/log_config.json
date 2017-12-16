@@ -36,7 +36,7 @@
 		},
 		"error": {
 			"appenders": ["error"],
-			"level": "error"
+			"level": "trace"
 		}
 	}
 }

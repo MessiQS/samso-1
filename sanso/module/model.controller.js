@@ -1,3 +1,15 @@
+
+
+//链接数据库的类
+const {
+	sqlFormat
+} = require('../service/connect');
+const {
+	selectFromSql,
+    insertToSql,
+    updateToSql
+} = new sqlFormat();
+
 module.exports = {
     updateDataModel,
     updateBankModel,
@@ -5,7 +17,6 @@ module.exports = {
     getOldBankModel,
     dealWithData,
 }
-
 
 /*
     detail:{

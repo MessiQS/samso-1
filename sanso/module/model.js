@@ -70,8 +70,17 @@ class QuesrtionModel {
 
     static async getUpdateInfoCache(ctx, next) {
         const data = ctx.request.body;
+        const { user_id } = data
+        const isValid = Check.checkHeader(ctx.request, user_id)
+        if (!isValid) {
+            ctx.response.body = {
+                "type": false,
+                "data": "没有权限",
+            };
+            return;
+        }
         temporaryQuesInfo.push(data);
-        addLog(`存储用户做题西信息 , ${data}`,'chat')
+        addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
         if (temporaryQuesInfo.length >= 100) {
             this.updateUserQuestionInfo()
         }
@@ -86,7 +95,7 @@ class QuesrtionModel {
         let copyGlobalData = [].concat(temporaryQuesInfo);
         temporaryQuesInfo.length = 0;
         let { dataModel, dataBank } = dealWithData(copyGlobalData)
-        addLog(`更新刷题信息，时间为${ moment().format('YYYY-MM-DD HH:mm:ss')}`)
+        addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
         //更新用户刷题情况
         //需要同时更新日期模型和题库模型
         dataModel.forEach(result => {
@@ -101,12 +110,12 @@ class QuesrtionModel {
     static async getUserBuyInfo(ctx, next) {
         const { user_id } = ctx.request.body;
         const isValid = Check.checkHeader(ctx.request, user_id)
-        if (!isValid){
+        if (!isValid) {
             ctx.response.body = {
                 "type": false,
                 "data": "没有权限",
             };
-            return ;
+            return;
         }
         //更新用户购买情况
         const selectAccount = await selectFromSql('user', {

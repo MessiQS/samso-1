@@ -10,7 +10,6 @@ let isdebugger = true;
 // if (config && config.app && config.app.APP_DEBUG) {
 //     isdebugger = true;
 // }
-log_success.trace('12312')
 function addLog(data, type) {
     if (!isdebugger) {
         return;
