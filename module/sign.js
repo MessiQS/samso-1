@@ -38,13 +38,24 @@ class Sign {
 						"account": "= " + account
 					});
 				if (uodatesql) {
-					let userInfo;
+					let userInfo,
+						user_id = row[0].user_id;
 					userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
+					console.log({
+						'type': true,
+						'data': {
+							'token': uid,
+							user_id,
+							userInfo
+						}
+					})
 					ctx.response.body = {
 						'type': true,
-						'data': '登录成功',
-						'token': uid,
-						userInfo
+						'data': {
+							'token': uid,
+							user_id,
+							userInfo
+						}
 					};
 				} else {
 					ctx.response.body = {

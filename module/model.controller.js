@@ -2,7 +2,8 @@ module.exports = {
     updateDataModel,
     updateBankModel,
     getOldDataModel,
-    getOldBankModel
+    getOldBankModel,
+    dealWithData,
 }
 
 
@@ -185,7 +186,7 @@ async function getOldBankModel({ user_id, bankname }) {
     }
 }
 
-export function dealWithData(copyGlobalData) {
+ function dealWithData(copyGlobalData) {
     let dataModel = [],
         dataBank = [];
     const useridAndBankname = [];//用来限制datamodel去重

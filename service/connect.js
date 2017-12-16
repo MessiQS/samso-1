@@ -124,13 +124,13 @@ class sqlFormat extends groupFunctionArray {
             dateArray = Object.keys(data);
         dateArray.forEach((value, index) => {
             if (index === dateArray.length - 1) {
-                dataValue = dataValue + value + '="' + data[value] + '"'
+                dataValue = `${dataValue}${value}='${data[value]}'`
             } else {
-                dataValue = dataValue + value + '="' + data[value] + '",'
+                dataValue = `${dataValue}${value}='${data[value]}',`
             }
         })
         for (let key in condition) {
-            condi = condi + ' ' + key + ' ' + condition[key];
+            condi = `${condi} ${key} ${condition[key]}`;
         };
         return super.getSql(selectSql + dataValue + condi);
     }

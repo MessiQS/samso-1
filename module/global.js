@@ -54,4 +54,5 @@ module.exports = {
 	getProvince: getProvince,//获取城市，试卷名相关信息
 	provinceObj: provinceObj,//id与城市的对应
 	provinceCache: provinceCache,//缓存城市
+	temporaryQuesInfo:temporaryQuesInfo
 }

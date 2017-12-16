@@ -68,6 +68,7 @@ class QuesrtionModel {
     static async getUpdateInfoCache(ctx, next) {
         const data = ctx.request.body;
         temporaryQuesInfo.push(data);
+        console.log(data)
         if (temporaryQuesInfo.length >= 100) {
             this.updateUserQuestionInfo()
         }
@@ -94,9 +95,10 @@ class QuesrtionModel {
         })
     }
 
-    static async getUserBuyInfo(data) {
+    static async getUserBuyInfo(ctx,next) {
+        const data = ctx.request.body;
         //更新用户购买情况
-        const { user_id, bankname } = data;
+        const { user_id } = data;
         const selectAccount = await selectFromSql('user', {
             "user_id": "= " + user_id
         });
@@ -125,6 +127,7 @@ class QuesrtionModel {
         if (data_info.buyedInfo.indexOf(bankname) < 0) {
             data_info.buyedInfo.push(bankname)
         }
+        console.log(data)
 
         try {
             await updateToSql('user', {
