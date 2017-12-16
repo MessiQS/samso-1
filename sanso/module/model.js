@@ -105,9 +105,16 @@ class QuesrtionModel {
         try {
             let { data_info } = selectAccount[0]
             data_info = data_info ? JSON.parse(data_info) : {}
-            return data_info;
+            ctx.response.body = {
+                "type": true,
+                "data": data_info,
+            };
+
         } catch (e) {
-            return e;
+            ctx.response.body = {
+                "type": false,
+                "data": e,
+            };
         }
 
     }
