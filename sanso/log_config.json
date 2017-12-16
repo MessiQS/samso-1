@@ -2,19 +2,19 @@
 	"appenders": {
 		"success":{
 			"type": "file",
-			"filename": "../logs/success.log"
+			"filename": "logs/success.log"
 		},
 		"chat":{
 			"type": "file",
-			"filename": "../logs/chat.log"
+			"filename": "logs/chat.log"
 		},
 		"group":{
 			"type": "file",
-			"filename": "../logs/group.log"
+			"filename": "logs/group.log"
 		},
 		"error":{
 			"type": "file",
-			"filename": "../logs/error.log"
+			"filename": "logs/error.log"
 		}
 	},
 	"categories":{

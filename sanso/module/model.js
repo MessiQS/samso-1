@@ -13,6 +13,7 @@ const {
     updateToSql
 } = new sqlFormat();
 const moment = require('moment')
+const addLog = require('../serverLog').addLog;
 
 const Check = require('../service/check')
 
@@ -37,8 +38,8 @@ class QuesrtionModel {
         let bankModel = await getOldBankModel({ user_id, bankname })
         let dataModel = await getOldDataModel({ user_id, dateTime })
         if (dataModel.error || bankModel.error) {
-            console.log(dataModel.source)
-            console.log(bankModel.source)
+            addLog(dataModel.source)
+            addLog(bankModel.source)
             return {}
         }
         dataModel.detail = JSON.parse(dataModel.detail)
@@ -70,7 +71,7 @@ class QuesrtionModel {
     static async getUpdateInfoCache(ctx, next) {
         const data = ctx.request.body;
         temporaryQuesInfo.push(data);
-        console.log(data)
+        addLog(`存储用户做题西信息 , ${data}`,'chat')
         if (temporaryQuesInfo.length >= 100) {
             this.updateUserQuestionInfo()
         }
@@ -85,7 +86,7 @@ class QuesrtionModel {
         let copyGlobalData = [].concat(temporaryQuesInfo);
         temporaryQuesInfo.length = 0;
         let { dataModel, dataBank } = dealWithData(copyGlobalData)
-
+        addLog(`更新刷题信息，时间为${ moment().format('YYYY-MM-DD HH:mm:ss')}`)
         //更新用户刷题情况
         //需要同时更新日期模型和题库模型
         dataModel.forEach(result => {

@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 class groupFunctionArray {
     constructor() {};
     getSql(selectSQL) {
-        console.log(selectSQL)
+        addLog(selectSQL,'chat')
         return new Promise((resolve, reject) => {
             pool.getConnection(function(err, connection) {
                 if (err) {

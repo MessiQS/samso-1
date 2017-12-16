@@ -11,6 +11,8 @@ const {
 	insertToSql,
 	updateToSql
 } = new sqlFormat();
+const addLog = require('../serverlog').addLog;
+
 class Sign {
 	//登录
 	static async login(ctx, next) {

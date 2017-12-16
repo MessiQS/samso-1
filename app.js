@@ -1,3 +1,4 @@
+
 const Koa = require('koa');
 const serve = require('koa-static');
 
@@ -95,6 +96,12 @@ router
     .get('./api/getUserQuestionInfo', getUserQuestionInfo)
     //用户反馈信息
     .post('/api/feedback', feedback)
-    
+
+function intervalUpdateUserQuestionInfo(){
+    updateUserQuestionInfo();
+    setTimeout(intervalUpdateUserQuestionInfo,1000*2*60)
+}
+intervalUpdateUserQuestionInfo();
 app.listen(port);
+
 console.log('app started at port ' + port + '...');
