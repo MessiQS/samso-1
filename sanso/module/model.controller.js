@@ -127,31 +127,75 @@ async function updateBankModel(data) {
 
 async function getOldDataModel({ user_id, dateTime }) {
     try {
-        let params;
-        if (!!dateTime) {
+        let params,
+            /*
+            type 表示获取数据的类型
+            共三种
+            all 表示拉取所有信息
+            arrry 表示拉一个 数据
+            simple 表示一个
+            */
+            type = "all",
+            isDefault = false;//标记是否已经存在
+        if (!!dateTime && !Array.isArray(dateTime)) {
+            type = "simple";
             params = {
                 "user_id": ` = ${user_id}`,
                 "data": ` = ${dateTime}`
             }
+        } else if (!!dateTime && Array.isArray(dateTime)) {
+            type = "arrry";
+            params = {
+                "user_id": ` = ${user_id}`,
+            }
         } else {
+            type = "all";
             params = {
                 "user_id": ` = ${user_id}`,
             }
         }
         const response = selectFromSql('datamodel', params);
+        let cell;
         if (Array.isArray(response) && response.length > 0) {
-            return {
-                isDefault: true,//标记是否已经存在
-                cell: response[0]
+            response.forEach(res => {
+                res.detail = res.detail ? JSON.parse(dataModel.detail) : null
+            });
+            switch (type) {
+                case 'all':
+                    cell = response
+                    break;
+                case 'array':
+                    cell = response.filter(res => dateTime.indexOf(res.data) >= 0)
+                    break
+                case 'simple':
+                    cell = response[0]
+                    break
             }
+            isDefault = true
         } else {
-            return {
-                isDefault: false,//标记是否已经存在
-                cell: {
-                    user_id,
-                    date: dateTime
-                }
+            switch (type) {
+                case 'all':
+                    cell = null
+                    break;
+                case 'array':
+                    cell = dateTime.map(res => {
+                        return {
+                            user_id,
+                            date: res
+                        }
+                    })
+                    break
+                case 'simple':
+                    cell = {
+                        user_id,
+                        date: dateTime
+                    }
+                    break
             }
+        }
+        return {
+            isDefault,
+            cell
         }
     } catch (source) {
         return {
@@ -176,9 +220,12 @@ async function getOldBankModel({ user_id, bankname }) {
         }
         const response = selectFromSql('bankmodel', params);
         if (Array.isArray(response) && response.length > 0) {
+            response.forEach(res => {
+                res.detail = res.detail ? JSON.parse(dataModel.detail) : null
+            });
             return {
                 isDefault: true,//标记是否已经存在
-                cell: response[0]
+                cell: bankname ? response : response[0]
             }
         } else {
             return {
@@ -197,7 +244,7 @@ async function getOldBankModel({ user_id, bankname }) {
     }
 }
 
- function dealWithData(copyGlobalData) {
+function dealWithData(copyGlobalData) {
     let dataModel = [],
         dataBank = [];
     const useridAndBankname = [];//用来限制datamodel去重

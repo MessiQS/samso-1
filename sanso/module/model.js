@@ -42,8 +42,6 @@ class QuesrtionModel {
             addLog(bankModel.source)
             return {}
         }
-        dataModel.detail = JSON.parse(dataModel.detail)
-        bankModel.detail = JSON.parse(bankModel.detail)
 
         if (bankname || isBankDefault) {
             ctx.response.body = {
