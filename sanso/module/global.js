@@ -4,14 +4,21 @@ const {
 } = require('../service/connect');
 const {
 	getSql,
+	selectFromSql
 } = new sqlFormat();
 
 let code = {
 
-};
+};//存储验证码信息
+
 let provinceObj = {
 
 };
+
+//缓存试卷信息
+let paperObj = null;
+
+//缓存用户刷题信息，防止接触数据库太多
 let temporaryQuesInfo = []
 
 async function getProvince() {
@@ -35,18 +42,14 @@ async function getProvince() {
 	}
 }
 async function provinceCache() {
-	if (Object.keys(provinceObj).length === 0) {
-		const sskey = 'SP00000',
-			nameArr = await getSql('select distinct title from question_banks');
-		nameArr.forEach((res, index) => {
-			index = index + 1;
-			let len = index.toString().length,
-				key = sskey.slice(0, 7 - len) + index.toString();
-			provinceObj[key] = res.title;
-		});
-		return provinceObj;
-	} else {
-		return provinceObj;
+	if(!!paperObj){
+		return paperObj
+	}else{
+		const paperSqlInfo = await selectFromSql('papers');
+		paperSqlInfo.forEach(result => {
+			paperObj[result.id] = result
+		})
+		return paperObj
 	}
 }
 module.exports = {

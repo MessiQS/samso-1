@@ -16,7 +16,7 @@ class QuestionBank {
 	static async getPaper(ctx, next) {
 		const { account, token, paperId } = ctx.query;
 		const isValid = await checkToken(account, token);
-		const provinceObjectCache =await provinceCache();
+		const provinceObjectCache = await provinceCache();
 		
 		if (!isValid) {
 			ctx.response.body = {
