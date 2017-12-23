@@ -217,7 +217,7 @@ async function getOldBankModel({ user_id, bankname }) {
         if (!!bankname) {
             params = {
                 "user_id": ` = ${user_id}`,
-                "bankname": ` = ${bankname}`
+                "AND bankname": ` = ${bankname}`
             }
         } else {
             params = {
