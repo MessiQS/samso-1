@@ -67,9 +67,9 @@ class QuestionBank {
 			cityArray = ['北京', '上海', '天津', '重庆', '广州', '深圳'],
 			quArray = ['内蒙古', '宁夏', '西藏', '新疆'],
 			typeObject = new Array();
-		paperNameArray.forEach((result) => {
+		for (let key in paperNameArray) {
+			let result = paperNameArray[key], typeName;
 			const { title } = result;
-			let typeName;
 			if (title.indexOf('国家') >= 0) {
 				typeName = '国考';
 			} else if (isCity(title, quArray).type) {
@@ -83,7 +83,7 @@ class QuestionBank {
 				typeName = provinceArray[idx] + '省考';
 			};
 			pushInType(typeObject, typeName, result);
-		});
+		}
 		ctx.response.body = {
 			type: true,
 			data: typeObject
