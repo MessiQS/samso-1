@@ -131,7 +131,7 @@ class Sign {
 		});
 		let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
 		codeObj[account] = code;
-		const codeResponse = sendCode({
+		const codeResponse = await sendCode({
 			code,
 			account
 		})
