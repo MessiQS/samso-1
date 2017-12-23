@@ -42,7 +42,7 @@ function sendCode(data) {
 function getPostBody({ account, code }, random) {
     const strTime = parseInt(new Date().getTime() / 1000, 10); //unix时间戳
     const time = 2;
-    const sigContent = `appkey=${appkey}&random=${random}&time=${strTime}&mobile=${phoneNumbers}`
+    const sigContent = `appkey=${appkey}&random=${random}&time=${strTime}&mobile=${account}`
     sha256.update(sigContent)
     const sig = sha256.digest('hex')
     const content = `${code}为您的登陆验证码，请于${time}分钟内填写。如非本人操作，请忽略本短信。`
