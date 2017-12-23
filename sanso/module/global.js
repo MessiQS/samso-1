@@ -45,6 +45,7 @@ async function provinceCache() {
 	if(!!paperObj){
 		return paperObj
 	}else{
+		paperObj = {}
 		const paperSqlInfo = await selectFromSql('papers');
 		paperSqlInfo.forEach(result => {
 			paperObj[result.id] = result
