@@ -32,7 +32,6 @@ async function provinceCache() {
 }
 module.exports = {
 	codeObj: code,
-	provinceObj: provinceObj,//id与城市的对应
 	provinceCache: provinceCache,//缓存城市
 	temporaryQuesInfo:temporaryQuesInfo
 }
