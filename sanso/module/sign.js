@@ -12,6 +12,7 @@ const {
 	updateToSql
 } = new sqlFormat();
 const addLog = require('../serverlog').addLog;
+const sendCode = require('../service/sendCode')
 
 class Sign {
 	//登录
@@ -130,10 +131,22 @@ class Sign {
 		});
 		let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
 		codeObj[account] = code;
-		ctx.response.body = {
-			type: true,
-			data: code
-		};
+		const codeResponse = sendCode({
+			code,
+			account
+		})
+		if(codeResponse.errmsg === "OK"){
+			ctx.response.body = {
+				type: true,
+				data: code
+			};
+		}else{
+			ctx.response.body = {
+				type: false,
+				data: "发送验证码失败，请于1分钟后重试"
+			};
+		}
+
 		setTimeout(() => {
 			if (codeObj[account] === code) {
 				delete codeObj[account];
