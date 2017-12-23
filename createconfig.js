@@ -8,17 +8,27 @@ const {
 	insertToSql,
 	updateToSql
 } = new sqlFormat();
-async function addConfig() {
+function addConfig() {
 	// body...
-	const titleArr = await getSql('select distinct title from question_banks'),
-		  sskey = 'SP00000';
-	let title = new Object();
-	titleArr.map((res,index) => {
-		index = index + 1;
-		let len = index.toString().length,
-			key = sskey.slice(0,7 - len) + index.toString();
-		title[key] = res.title;
+	getSql('select distinct title,province,year from question_banks').then(titleArr => {
+		let sskey = 'SP00000';
+		let title = [];
+		titleArr.map((res, index) => {
+			index = index + 1;
+			let len = index.toString().length,
+				key = sskey.slice(0, 7 - len) + index.toString();
+			title.push({
+				id: key,
+				title: res.title,
+				price: "6.00",
+				version: "1.0",
+				province: res.province,
+				year: res.year
+			})
+		})
+		insertToSql('papers',title)
+		console.log(title);
 	})
-	console.log(title);
+
 }
 addConfig();
