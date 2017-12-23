@@ -93,7 +93,7 @@ class QuesrtionModel {
         let copyGlobalData = [].concat(temporaryQuesInfo);
         temporaryQuesInfo.length = 0;
         let { dataModel, dataBank } = dealWithData(copyGlobalData)
-        addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
+        // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
         //更新用户刷题情况
         //需要同时更新日期模型和题库模型
         dataModel.forEach(result => {

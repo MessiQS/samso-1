@@ -10,14 +10,14 @@ const {
 	updateToSql
 } = new sqlFormat();
 const { checkToken } = require('../service/check');
-const { getProvince,provinceObj,provinceCache } = require('./global');
+const { provinceCache } = require('./global');
 
 class QuestionBank {
 	static async getPaper(ctx, next) {
 		const { account, token, paperId } = ctx.query;
 		const isValid = await checkToken(account, token);
-		const provinceObjectCache =await provinceCache();
-		
+		const provinceObjectCache = await provinceCache();
+
 		if (!isValid) {
 			ctx.response.body = {
 				type: 'false',
@@ -57,7 +57,7 @@ class QuestionBank {
 			}
 			return;
 		};
-		const { paperNameArray, getCitysKey } = await getProvince();
+		const paperNameArray = await provinceCache();
 		const provinceArray = ['安徽', '北京', '上海', '天津', '重庆', '河北', '山西', '内蒙古',
 			'辽宁', '吉林', '黑龙江', '江苏', '浙江', '福建', '江西', '山东',
 			'河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州',
@@ -67,8 +67,9 @@ class QuestionBank {
 			cityArray = ['北京', '上海', '天津', '重庆', '广州', '深圳'],
 			quArray = ['内蒙古', '宁夏', '西藏', '新疆'],
 			typeObject = new Array();
-		paperNameArray.forEach(({ title }) => {
-			let typeName;
+		for (let key in paperNameArray) {
+			let result = paperNameArray[key], typeName;
+			const { title } = result;
 			if (title.indexOf('国家') >= 0) {
 				typeName = '国考';
 			} else if (isCity(title, quArray).type) {
@@ -81,11 +82,8 @@ class QuestionBank {
 				let idx = checkProvince(title);
 				typeName = provinceArray[idx] + '省考';
 			};
-			pushInType(typeObject, typeName ,{
-				id: getCitysKey[title],
-				value: title
-			});
-		});
+			pushInType(typeObject, typeName, result);
+		}
 		ctx.response.body = {
 			type: true,
 			data: typeObject
@@ -120,10 +118,10 @@ class QuestionBank {
 			return index;
 		}
 
-		function pushInType(arr, key ,info) {
+		function pushInType(arr, key, info) {
 			//检测有没有这个区的，如果没有就新建
 			if (!arr.some((res) => {
-				if(res.title === key){
+				if (res.title === key) {
 					res.data.push(info)
 				}
 				return res.title === key;
