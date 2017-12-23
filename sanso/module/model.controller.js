@@ -9,7 +9,7 @@ const {
     insertToSql,
     updateToSql
 } = new sqlFormat();
-
+const moment = require('moment')
 module.exports = {
     updateDataModel,
     updateBankModel,
@@ -31,6 +31,9 @@ module.exports = {
 async function updateDataModel(data) {
     const dateTime = moment().format('YYYY-MM-DD');
     const { user_id, detail } = data;
+    if(!detail || Object.keys(detail).length === 0){
+        return;
+    }
     const oldCell = await getOldDataModel({
         user_id,
         dateTime
@@ -85,6 +88,9 @@ async function updateDataModel(data) {
 */
 async function updateBankModel(data) {
     const { user_id, bankname, detail } = data;
+    if(!detail || Object.keys(detail).length === 0){
+        return;
+    }
     const oldCell = await getOldBankModel({
         user_id,
         bankname
