@@ -33,7 +33,7 @@ class QuestionBank {
 			return;
 		}
 		const questionArray = await selectFromSql('question_banks', {
-			'FIND_IN_SET': '("' + provinceObjectCache[paperId] + '",`title`)'
+			'FIND_IN_SET': '("' + provinceObjectCache[paperId].title + '",`title`)'
 		});
 		if (!questionArray) {
 			ctx.response.body = {
