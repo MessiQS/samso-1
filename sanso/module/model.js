@@ -151,13 +151,11 @@ class QuesrtionModel {
         if (data_info.buyedInfo.indexOf(bankname) < 0) {
             data_info.buyedInfo.push(bankname)
         }
-        console.log(data)
-
         try {
             await updateToSql('user', {
                 data_info: JSON.stringify(data_info)
             }, {
-                    "user_id": ` = ${user_id}`,
+                    "user_id": ` = '${user_id}'`,
                 })
             ctx.response.body = {
                 "type": true,
