@@ -18,9 +18,9 @@ class Sign {
 	//登录
 	static async login(ctx, next) {
 		const { account, password } = ctx.request.body;
-		console.log(account, password)
+		// console.log(account, password)
 		let row = await selectFromSql('user', {
-			'account': "= " + account
+			'account': `="${account}"`
 		});
 		if (!row || !Array.isArray(row) || row.length === 0) {
 			ctx.response.body = {
@@ -44,14 +44,6 @@ class Sign {
 					let userInfo,
 						user_id = row[0].user_id;
 					userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
-					console.log({
-						'type': true,
-						'data': {
-							'token': uid,
-							user_id,
-							userInfo
-						}
-					})
 					ctx.response.body = {
 						'type': true,
 						'data': {
@@ -79,7 +71,7 @@ class Sign {
 			vericode = ctx.request.body.vericode || ''; //验证码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + account
+			"account": `="${account}"`
 		});
 		if (selectAccount && Array.isArray(selectAccount) && selectAccount[0]) {
 			ctx.response.body = {
@@ -127,7 +119,7 @@ class Sign {
 		};
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + account
+			"account": `="${account}"`
 		});
 		let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
 		codeObj[account] = code;
@@ -135,12 +127,12 @@ class Sign {
 			code,
 			account
 		})
-		if(codeResponse.errmsg === "OK"){
+		if (codeResponse.errmsg === "OK") {
 			ctx.response.body = {
 				type: true,
 				data: code
 			};
-		}else{
+		} else {
 			ctx.response.body = {
 				type: false,
 				data: "发送验证码失败，请于1分钟后重试"
@@ -161,7 +153,7 @@ class Sign {
 			password = ctx.request.body.password || ''; //新密码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + account
+			"account": `="${account}"`
 		});
 		if (!selectAccount || !Array.isArray(selectAccount) || !selectAccount[0]) {
 			ctx.response.body = {
@@ -183,7 +175,7 @@ class Sign {
 			password: password,
 		};
 		await updateToSql('user', data, {
-			"account": "= " + account
+			"account": `="${account}"`
 		}).catch(res => {
 			ctx.response.body = {
 				"type": false,
@@ -219,7 +211,7 @@ class Sign {
 			accountToken = ctx.request.body.accountToken || ''; //验证码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + account
+			"account": `="${account}"`
 		});
 		if (!selectAccount || !Array.isArray(selectAccount) || !selectAccount[0]) {
 			ctx.response.body = {
@@ -251,7 +243,7 @@ class Sign {
 			password = ctx.request.body.password || ''; //密码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + account
+			"account": `="${account}"`
 		});
 		if (selectAccount[0].password === password) {
 			ctx.response.body = {
@@ -271,7 +263,7 @@ class Sign {
 			oldAccount = ctx.request.body.oldAccount || ''; //原密码
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
-			"account": "= " + oldAccount
+			"account": `="${oldAccount}"`
 		});
 		if (!selectAccount && !Array.isArray(selectAccount) && !selectAccount[0]) {
 			ctx.response.body = {

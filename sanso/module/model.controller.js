@@ -146,18 +146,18 @@ async function getOldDataModel({ user_id, dateTime }) {
         if (!!dateTime && !Array.isArray(dateTime)) {
             type = "simple";
             params = {
-                "user_id": ` = ${user_id}`,
-                "data": ` = ${dateTime}`
+                "user_id": ` = "${user_id}"`,
+                "data": ` = "${dateTime}"`
             }
         } else if (!!dateTime && Array.isArray(dateTime)) {
             type = "arrry";
             params = {
-                "user_id": ` = ${user_id}`,
+                "user_id": ` = "${user_id}"`,
             }
         } else {
             type = "all";
             params = {
-                "user_id": ` = ${user_id}`,
+                "user_id": ` = "${user_id}"`,
             }
         }
         const response = selectFromSql('datamodel', params);
@@ -216,12 +216,12 @@ async function getOldBankModel({ user_id, bankname }) {
         let params;
         if (!!bankname) {
             params = {
-                "user_id": ` = ${user_id}`,
-                "AND bankname": ` = ${bankname}`
+                "user_id": ` = "${user_id}"`,
+                "AND bankname": ` = "${bankname}"`
             }
         } else {
             params = {
-                "user_id": ` = ${user_id}`,
+                "user_id": ` = "${user_id}"`,
             }
         }
         const response = selectFromSql('bankmodel', params);

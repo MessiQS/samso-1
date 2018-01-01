@@ -117,7 +117,7 @@ class QuesrtionModel {
         }
         //更新用户购买情况
         const selectAccount = await selectFromSql('user', {
-            "user_id": "= " + user_id
+            "user_id": `= "${user_id}"`
         });
         try {
             let { data_info } = selectAccount[0]
@@ -141,7 +141,7 @@ class QuesrtionModel {
         //更新用户购买情况
         const { user_id, bankname } = data;
         const selectAccount = await selectFromSql('user', {
-            "user_id": "= " + user_id
+            "user_id": `= "${user_id}"`
         });
         let { data_info } = selectAccount[0]
         data_info = data_info ? JSON.parse(data_info) : {}
