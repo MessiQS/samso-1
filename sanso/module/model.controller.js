@@ -43,7 +43,7 @@ async function updateDataModel(data) {
         return;
     }
     let { isDefault, cell } = oldCell;
-    let cellDeatil = isDefault ? JSON.parse(cell.detail) : {};
+    let cellDeatil = isDefault ? cell.detail : {};
     // console.log("---------------------------------开始------------------------------------------")
     // console.log(cellDeatil, 1)
     for (let key in detail) {
@@ -104,7 +104,7 @@ async function updateBankModel(data) {
         return;
     }
     let { isDefault, cell } = oldCell;
-    let cellDeatil = isDefault ? JSON.parse(cell.detail) : {};
+    let cellDeatil = isDefault ? cell.detail : {};
     // console.log(cellDeatil)
     // console.log('---------------------------------开始---------------------')
     for (let qname in detail) {
@@ -170,7 +170,7 @@ async function getOldDataModel({ user_id, dateTime }) {
         let cell;
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
-                res.detail = res.detail ? res.detail : null
+                res.detail = res.detail ? JSON.parse(res.detail) : null
             });
             switch (type) {
                 case 'all':
@@ -235,7 +235,7 @@ async function getOldBankModel({ user_id, bankname }) {
         const response = await selectFromSql('bankmodel', params);
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
-                res.detail = res.detail ? res.detail : null
+                res.detail = res.detail ? JSON.parse(res.detail) : null
             });
             return {
                 isDefault: true,//标记是否已经存在
