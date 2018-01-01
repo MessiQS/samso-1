@@ -27,7 +27,7 @@ class Check {
         }
         const token = header.authorization
         const user = await selectFromSql('user', {
-            user_id: `= ${user_id}`
+            user_id: `= "${user_id}"`
         });
         if (user && user[0] && user[0].token === token) {
             return true;

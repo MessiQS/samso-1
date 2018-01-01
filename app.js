@@ -99,7 +99,7 @@ router
 
 function intervalUpdateUserQuestionInfo(){
     updateUserQuestionInfo();
-    setTimeout(intervalUpdateUserQuestionInfo,1000*2*60)
+    setTimeout(intervalUpdateUserQuestionInfo,1000*1*60)
 }
 intervalUpdateUserQuestionInfo();
 app.listen(port);

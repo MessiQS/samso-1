@@ -79,8 +79,7 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
-        if (temporaryQuesInfo.length >= 1) {
-            // if (temporaryQuesInfo.length >= 100) {
+        if (temporaryQuesInfo.length >= 100) {
             updateUserQuestionInfo()
         }
         ctx.response.body = {
@@ -145,7 +144,7 @@ class QuesrtionModel {
             await updateToSql('user', {
                 data_info: JSON.stringify(data_info)
             }, {
-                    "user_id": ` = ${user_id}`,
+                    "user_id": ` = "${user_id}"`,
                 })
             ctx.response.body = {
                 "type": true,

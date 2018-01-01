@@ -66,7 +66,7 @@ async function updateDataModel(data) {
 
         }
     }
-    // console.log(cellDeatil, 5)
+    // console.log(cellDeatil, 'model update')
     // console.log("---------------------------------结束------------------------------------------")
     if (isDefault) {
         updateToSql('datamodel', {
@@ -117,13 +117,13 @@ async function updateBankModel(data) {
         } else {
             cellDeatil[qname]["right"] = cellDeatil[qname]["right"] + detail[qname]['right'];
             cellDeatil[qname]["wrong"] = cellDeatil[qname]["wrong"] + detail[qname]['wrong'];
-            cellDeatil[qname]["weighted"] = parseInt(cellDeatil[qname]["weighted"],10) + parseInt(detail[qname]['weighted'],10);
+            cellDeatil[qname]["weighted"] = parseInt(cellDeatil[qname]["weighted"], 10) + parseInt(detail[qname]['weighted'], 10);
             // cellDeatil['weighted'] += detail[qname]['weighted']
         }
 
     }
+    // console.log(cellDeatil, 'bank update!!!')
     if (isDefault) {
-        // console.log(cellDeatil, 1)
         // console.log('---------------------------------结束---------------------')
         updateToSql('bankmodel', {
             detail: JSON.stringify(cellDeatil)
