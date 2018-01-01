@@ -93,7 +93,7 @@ router
     //刷题之后的更新
     .post('/api/getUpdateInfoCache', getUpdateInfoCache)
     //获取用户刷题情况
-    .get('./api/getUserQuestionInfo', getUserQuestionInfo)
+    .get('/api/getUserQuestionInfo', getUserQuestionInfo)
     //用户反馈信息
     .post('/api/feedback', feedback)
 
