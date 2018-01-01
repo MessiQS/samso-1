@@ -31,7 +31,7 @@ module.exports = {
 async function updateDataModel(data) {
     const dateTime = moment().format('YYYY-MM-DD');
     const { user_id, detail } = data;
-    if(!detail || Object.keys(detail).length === 0){
+    if (!detail || Object.keys(detail).length === 0) {
         return;
     }
     const oldCell = await getOldDataModel({
@@ -44,32 +44,36 @@ async function updateDataModel(data) {
     }
     let { isDefault, cell } = oldCell;
     let cellDeatil = isDefault ? JSON.parse(cell.detail) : {};
-    for (let key of detail) {
+    // console.log("---------------------------------开始------------------------------------------")
+    // console.log(cellDeatil, 1)
+    for (let key in detail) {
         if (!cellDeatil[key]) {
             cellDeatil[key] = {};
         }
-        for (let qname of detail[key]) {
+        for (let qname in detail[key]) {
+            // console.log(detail[key], key, qname, 3)
+            // console.log(cellDeatil[key][qname], 4)
             if (!cellDeatil[key][qname]) {
                 cellDeatil[key][qname] = {
                     right: detail[key][qname]['right'],
                     wrong: detail[key][qname]['wrong']
                 };
             } else {
-                if (detail[key]['type'] === "right") {
-                    cellDeatil[key][qname]["right"] += detail[key][qname]['right'];
-                } else {
-                    cellDeatil[key][qname]["wrong"] += detail[key][qname]['wrong'];
-                }
+                // console.log( cellDeatil[key][qname]["right"], detail[key][qname]['right'] ,4.5)
+                cellDeatil[key][qname]["right"] = cellDeatil[key][qname]["right"] + detail[key][qname]['right'];
+                cellDeatil[key][qname]["wrong"] = cellDeatil[key][qname]["wrong"] + detail[key][qname]['wrong'];
             }
 
         }
     }
+    // console.log(cellDeatil, 5)
+    // console.log("---------------------------------结束------------------------------------------")
     if (isDefault) {
         updateToSql('datamodel', {
             detail: JSON.stringify(cellDeatil)
         }, {
-                "user_id": ` = ${user_id}`,
-                "data": ` = ${dateTime}`
+                "user_id": ` = "${user_id}"`,
+                "AND date": ` = "${dateTime}"`
             })
     } else {
         cell.detail = JSON.stringify(cellDeatil);
@@ -88,7 +92,7 @@ async function updateDataModel(data) {
 */
 async function updateBankModel(data) {
     const { user_id, bankname, detail } = data;
-    if(!detail || Object.keys(detail).length === 0){
+    if (!detail || Object.keys(detail).length === 0) {
         return;
     }
     const oldCell = await getOldBankModel({
@@ -96,34 +100,36 @@ async function updateBankModel(data) {
         bankname
     })
     if (oldCell.error) {
-        console.log(oldCell.source)
+        // console.log(oldCell.source)
         return;
     }
     let { isDefault, cell } = oldCell;
     let cellDeatil = isDefault ? JSON.parse(cell.detail) : {};
-    for (let qname of detail) {
+    // console.log(cellDeatil)
+    // console.log('---------------------------------开始---------------------')
+    for (let qname in detail) {
         if (!cellDeatil[qname]) {
             cellDeatil[qname] = {
                 right: detail[qname]['right'],
                 wrong: detail[qname]['wrong'],
-                wrighted: detail[qname]['wrighted']
+                weighted: parseInt(detail[qname]['weighted'])
             };
         } else {
-            if (detail[key]['type'] === "right") {
-                cellDeatil[qname]["right"] += detail[qname]['right'];
-            } else {
-                cellDeatil[qname]["wrong"] += detail[qname]['wrong'];
-            }
-            cellDeatil['wrighted'] += detail[qname]['wrighted']
+            cellDeatil[qname]["right"] = cellDeatil[qname]["right"] + detail[qname]['right'];
+            cellDeatil[qname]["wrong"] = cellDeatil[qname]["wrong"] + detail[qname]['wrong'];
+            cellDeatil[qname]["weighted"] = parseInt(cellDeatil[qname]["weighted"],10) + parseInt(detail[qname]['weighted'],10);
+            // cellDeatil['weighted'] += detail[qname]['weighted']
         }
 
     }
     if (isDefault) {
+        // console.log(cellDeatil, 1)
+        // console.log('---------------------------------结束---------------------')
         updateToSql('bankmodel', {
             detail: JSON.stringify(cellDeatil)
         }, {
-                "user_id": ` = ${user_id}`,
-                "bankname": ` = ${bankname}`
+                "user_id": ` = "${user_id}"`,
+                "AND bankname": ` = "${bankname}"`
             })
     } else {
         cell.detail = JSON.stringify(cellDeatil);
@@ -147,7 +153,7 @@ async function getOldDataModel({ user_id, dateTime }) {
             type = "simple";
             params = {
                 "user_id": ` = "${user_id}"`,
-                "data": ` = "${dateTime}"`
+                "AND date": ` = "${dateTime}"`
             }
         } else if (!!dateTime && Array.isArray(dateTime)) {
             type = "arrry";
@@ -160,18 +166,18 @@ async function getOldDataModel({ user_id, dateTime }) {
                 "user_id": ` = "${user_id}"`,
             }
         }
-        const response = selectFromSql('datamodel', params);
+        const response = await selectFromSql('datamodel', params);
         let cell;
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
-                res.detail = res.detail ? JSON.parse(dataModel.detail) : null
+                res.detail = res.detail ? res.detail : null
             });
             switch (type) {
                 case 'all':
                     cell = response
                     break;
                 case 'array':
-                    cell = response.filter(res => dateTime.indexOf(res.data) >= 0)
+                    cell = response.filter(res => dateTime.indexOf(res.date) >= 0)
                     break
                 case 'simple':
                     cell = response[0]
@@ -187,14 +193,16 @@ async function getOldDataModel({ user_id, dateTime }) {
                     cell = dateTime.map(res => {
                         return {
                             user_id,
-                            date: res
+                            date: res,
+                            id: `${user_id}${res}`
                         }
                     })
                     break
                 case 'simple':
                     cell = {
                         user_id,
-                        date: dateTime
+                        date: dateTime,
+                        id: `${user_id}${dateTime}`
                     }
                     break
             }
@@ -224,20 +232,21 @@ async function getOldBankModel({ user_id, bankname }) {
                 "user_id": ` = "${user_id}"`,
             }
         }
-        const response = selectFromSql('bankmodel', params);
+        const response = await selectFromSql('bankmodel', params);
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
-                res.detail = res.detail ? JSON.parse(dataModel.detail) : null
+                res.detail = res.detail ? res.detail : null
             });
             return {
                 isDefault: true,//标记是否已经存在
-                cell: bankname ? response : response[0]
+                cell: bankname ? response[0] : response
             }
         } else {
             return {
                 isDefault: false,//标记是否已经存在
                 cell: {
                     user_id,
+                    id: `${user_id}${bankname}`,
                     bankname
                 }
             }

@@ -79,8 +79,9 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
-        if (temporaryQuesInfo.length >= 100) {
-            this.updateUserQuestionInfo()
+        if (temporaryQuesInfo.length >= 1) {
+            // if (temporaryQuesInfo.length >= 100) {
+            updateUserQuestionInfo()
         }
         ctx.response.body = {
             "type": true,
@@ -88,21 +89,8 @@ class QuesrtionModel {
         };
     }
 
-    static async updateUserQuestionInfo() {
-        //globalData:Array[]
-        let copyGlobalData = [].concat(temporaryQuesInfo);
-        temporaryQuesInfo.length = 0;
-        let { dataModel, dataBank } = dealWithData(copyGlobalData)
-        // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
-        //更新用户刷题情况
-        //需要同时更新日期模型和题库模型
-        dataModel.forEach(result => {
-            updateDataModel(result)
-        })
-
-        dataBank.forEach(result => {
-            updateBankModel(result)
-        })
+    static updateUserQuestionInfo(){
+        updateUserQuestionInfo()
     }
 
     static async getUserBuyInfo(ctx, next) {
@@ -151,7 +139,7 @@ class QuesrtionModel {
         if (data_info.buyedInfo.indexOf(bankname) < 0) {
             data_info.buyedInfo.push(bankname)
         }
-        console.log(data)
+        // console.log(data)
 
         try {
             await updateToSql('user', {
@@ -176,3 +164,21 @@ class QuesrtionModel {
 }
 
 module.exports = QuesrtionModel
+
+async function updateUserQuestionInfo() {
+    //globalData:Array[]
+    let copyGlobalData = [].concat(temporaryQuesInfo);
+    temporaryQuesInfo.length = 0;
+    let { dataModel, dataBank } = dealWithData(copyGlobalData)
+    // console.log(dataModel, dataBank)
+    // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
+    //更新用户刷题情况
+    //需要同时更新日期模型和题库模型
+    dataModel.forEach(result => {
+        updateDataModel(result)
+    })
+
+    dataBank.forEach(result => {
+        updateBankModel(result)
+    })
+}
