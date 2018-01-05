@@ -22,6 +22,7 @@ const getUpdateInfoCache = {
         qname,//题目名称
         type,//right or wrong 
         weighted,//本次作答的加权分
+        dateTime,//此次作答的时间
     }
 }
 

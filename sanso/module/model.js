@@ -35,34 +35,22 @@ class QuesrtionModel {
             }
             return;
         }
-        let bankModel = await getOldBankModel({ user_id, bankname })
-        let dataModel = await getOldDataModel({ user_id, dateTime })
-        if (dataModel.error || bankModel.error) {
-            addLog(dataModel.source)
-            addLog(bankModel.source)
-            return {}
-        }
+        let bankModel = await selectFromSql('question_model', {
+            "user_id": `= "${user_id}"`
+        })
 
-        if (bankname || isBankDefault) {
+        if (bankModel && bankModel[0] && bankModel[0].detail) {
             ctx.response.body = {
                 type: true,
-                data: { bankModel }
+                data: JSON.parse(bankModel[0].detail)
             }
             return;
-        } else if (dateTime || isDataDefault) {
-            ctx.response.body = {
-                type: true,
-                data: { dataModel }
-            }
-            return
         } else {
             ctx.response.body = {
                 type: true,
-                data: {
-                    dataModel,
-                    bankModel
-                }
+                data: {}
             }
+            return;
         }
     }
 
@@ -79,7 +67,7 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
-        if (temporaryQuesInfo.length >= 100) {
+        if (temporaryQuesInfo.length >= 3) {
             updateUserQuestionInfo()
         }
         ctx.response.body = {
@@ -88,7 +76,7 @@ class QuesrtionModel {
         };
     }
 
-    static updateUserQuestionInfo(){
+    static updateUserQuestionInfo() {
         updateUserQuestionInfo()
     }
 
@@ -168,16 +156,161 @@ async function updateUserQuestionInfo() {
     //globalData:Array[]
     let copyGlobalData = [].concat(temporaryQuesInfo);
     temporaryQuesInfo.length = 0;
-    let { dataModel, dataBank } = dealWithData(copyGlobalData)
-    // console.log(dataModel, dataBank)
-    // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
-    //更新用户刷题情况
-    //需要同时更新日期模型和题库模型
-    dataModel.forEach(result => {
-        updateDataModel(result)
+    //按照userid存储刷题信息
+    let questionInfoByUserid = {}
+    copyGlobalData.forEach(info => {
+        const user_id = info.user_id || 'SS9999999';
+        if (!questionInfoByUserid['user_id']) {
+            questionInfoByUserid[user_id] = []
+        }
+        questionInfoByUserid[user_id].push(info)
+    })
+    for (let key in questionInfoByUserid) {
+        await updateUserInfo(questionInfoByUserid[key], key)
+    }
+}
+
+async function updateUserInfo(questionInfoByUserid, user_id) {
+    const selectAccount = await selectFromSql('question_model', {
+        "user_id": `= "${user_id}"`
+    });
+    let isAdd = true;
+    if (selectAccount && selectAccount[0]) {
+        isAdd = false
+    }
+    let detail = selectAccount && selectAccount[0] ? JSON.parse(selectAccount[0].detail) : {}
+    questionInfoByUserid.forEach(res => {
+        const { bankname, qname, user_id } = res
+        if (!detail[bankname]) {
+            detail[bankname] = {}
+        }
+        if (!detail[bankname][qname]) {
+            detail[bankname][qname] = {
+                user_id,
+                bankname,
+                qname,
+                right: 0,
+                wrong: 0,
+                weighted: 0,
+                dateTime: new Date().getTime()
+            }
+        }
+    })
+    questionInfoByUserid.forEach(singleInfo => {
+        const { bankname, qname, type, dateTime } = singleInfo
+        let thisQname = detail[bankname][qname]
+        if (type === "right") {
+            thisQname['right'] = thisQname['right'] + 1;
+        } else if (type === "wrong") {
+            thisQname['wrong'] = thisQname['wrong'] + 1;
+        }
+        thisQname.dateTime = dateTime
     })
 
-    dataBank.forEach(result => {
-        updateBankModel(result)
-    })
+    if (!isAdd) {
+        await updateToSql('question_model', {
+            detail: JSON.stringify(detail)
+        }, {
+                "user_id": `= "${user_id}"`
+            })
+    } else {
+        await insertToSql('question_model', {
+            user_id,
+            detail: JSON.stringify(detail)
+        })
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//刷题信息备用
+// static async getUserQuestionInfo(ctx, next) {
+//     const { user_id, bankname, dateTime, isDataDefault, isBankDefault } = ctx.query
+//     /*
+//     *用户刷题情况包含
+//     *最近几日刷题情况
+//     *已购买试卷刷题情况
+//     */
+//     if (!user_id) {
+//         ctx.response.body = {
+//             type: 'false',
+//             data: '请添加用户id'
+//         }
+//         return;
+//     }
+//     let bankModel = await getOldBankModel({ user_id, bankname })
+//     let dataModel = await getOldDataModel({ user_id, dateTime })
+//     if (dataModel.error || bankModel.error) {
+//         addLog(dataModel.source)
+//         addLog(bankModel.source)
+//         return {}
+//     }
+
+//     if (bankname || isBankDefault) {
+//         ctx.response.body = {
+//             type: true,
+//             data: { bankModel }
+//         }
+//         return;
+//     } else if (dateTime || isDataDefault) {
+//         ctx.response.body = {
+//             type: true,
+//             data: { dataModel }
+//         }
+//         return
+//     } else {
+//         ctx.response.body = {
+//             type: true,
+//             data: {
+//                 dataModel,
+//                 bankModel
+//             }
+//         }
+//     }
+// }
+
+//存储信息备用
+// async function updateUserQuestionInfo() {
+//     //globalData:Array[]
+//     let copyGlobalData = [].concat(temporaryQuesInfo);
+//     temporaryQuesInfo.length = 0;
+//     let { dataModel, dataBank } = dealWithData(copyGlobalData)
+//     // console.log(dataModel, dataBank)
+//     // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
+//     //更新用户刷题情况
+//     //需要同时更新日期模型和题库模型
+//     dataModel.forEach(result => {
+//         updateDataModel(result)
+//     })
+
+//     dataBank.forEach(result => {
+//         updateBankModel(result)
+//     })
+// }

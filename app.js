@@ -7,7 +7,7 @@ const router = require('koa-router')();
 //解析post
 const bodyParser = require('koa-bodyparser');
 //端口
-const port = 80;
+const port = 8080;
 //登录模块
 const {
     login,
