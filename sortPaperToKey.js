@@ -41,28 +41,84 @@ const init = async () => {
 }
 init()
 
+
 function changeAPaper(quesArray, titleObj) {
     quesArray.forEach(result => {
-        const { question, question_number } = result
+        let { question, question_number, question_material, analysis, option_A, option_B, option_C, option_D } = result
         const { key, value, title } = titleObj
-        if (question.indexOf(key) >= 0) {
-            let newTitle = replaceTokey(question, key, value)
+        const changeArr = needToUpdate(result, key);
+        if (changeArr.length > 0) {
+            let updateObject = {}
+
+            if (changeArr.indexOf('question') >= 0) {
+                updateObject['question'] = replaceTokey(question, key, value)
+            }
+            if (changeArr.indexOf('analysis') >= 0) {
+                updateObject['analysis'] = replaceTokey(analysis, key, value)
+            }
+            if (changeArr.indexOf('question_material') >= 0) {
+                updateObject['question_material'] = replaceTokey(question_material, key, value)
+            }
+            if (changeArr.indexOf('option_A') >= 0) {
+                updateObject['option_A'] = replaceTokey(option_A, key, value)
+            }
+            if (changeArr.indexOf('option_B') >= 0) {
+                updateObject['option_B'] = replaceTokey(option_B, key, value)
+            }
+            if (changeArr.indexOf('option_C') >= 0) {
+                updateObject['option_C'] = replaceTokey(option_C, key, value)
+            }
+            if (changeArr.indexOf('option_D') >= 0) {
+                updateObject['option_D'] = replaceTokey(option_D, key, value)
+            }
 
 
             if (!test[title]) {
                 test[title] = []
             }
-            test[title].push(question_number)
+            changeArr.push({
+                question_number
+            })
+            test[title].push(changeArr)
 
-            // updateToSql('question_banks', {
-            //     question: newTitle
-            // }, {
-            //         "title": ` = "${title}"`,
-            //         "AND question_number": ` = "${question_number}"`
-            //     })
+            updateToSql('question_banks', updateObject, {
+                "title": ` = "${title}"`,
+                "AND question_number": ` = "${question_number}"`
+            })
         }
     })
 }
+
+
+function needToUpdate({ question, question_material, analysis, option_A, option_B, option_C, option_D }, key) {
+    let tobeChange = [];
+
+    if (question.indexOf(key) >= 0) {
+        tobeChange.push('question')
+    }
+
+    if (question_material.indexOf(key) >= 0) {
+        tobeChange.push('question_material')
+    }
+    if (analysis.indexOf(key) >= 0) {
+        tobeChange.push('analysis')
+    }
+    if (option_A.indexOf(key) >= 0) {
+        tobeChange.push('option_A')
+    }
+
+    if (option_B.indexOf(key) >= 0) {
+        tobeChange.push('option_B')
+    }
+    if (option_C.indexOf(key) >= 0) {
+        tobeChange.push('option_C')
+    }
+    if (option_D.indexOf(key) >= 0) {
+        tobeChange.push('option_D')
+    }
+    return tobeChange
+}
+
 function replaceTokey(title, oldk, newk) {
     newk = `images/${newk}`
     title = title.replace(oldk, newk)
@@ -87,3 +143,17 @@ function replaceTokey(title, oldk, newk) {
     return title
 
 }
+
+
+// async function testFunc(title) {
+//     const quesArray = await selectFromSql('question_banks', {
+//         "title": `= "${title}"`,
+//     })
+//     quesArray.forEach(res => {
+//         if(res.question_number === "94"){
+//             console.log(res.question)
+//         }
+//     })
+// }
+
+// testFunc('2013年广东(务工)《行测》真题')
