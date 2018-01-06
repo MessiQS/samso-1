@@ -21,6 +21,7 @@ const {
 } = require('./sanso/module/sign');
 const {
     getPaper,
+    getSinglePaperInfo,
     getPaperType
 } = require('./sanso/module/questionBank');
 
@@ -86,6 +87,8 @@ router
     //获取试卷
     .get('/api/getpaper',getPaper)
     .get('/api/papertype',getPaperType)
+    //获取单套时间
+    .get('/api/getSinglePaperInfo',getSinglePaperInfo)
         //购买信息更新
     .post('/api/updateUserBuyInfo', updateUserBuyInfo)
     //获取购买信息
@@ -99,7 +102,7 @@ router
 
 function intervalUpdateUserQuestionInfo(){
     updateUserQuestionInfo();
-    setTimeout(intervalUpdateUserQuestionInfo,1000*1*60)
+    setTimeout(intervalUpdateUserQuestionInfo,1000*2*60)
 }
 intervalUpdateUserQuestionInfo();
 app.listen(port);

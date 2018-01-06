@@ -47,6 +47,31 @@ class QuestionBank {
 			data: questionArray
 		}
 	}
+	//获取单套试卷
+	static async getSinglePaperInfo(ctx, next) {
+		const { account, token, paperId } = ctx.query;
+		const isValid = await checkToken(account, token);
+		if (!isValid) {
+			ctx.response.body = {
+				type: 'false',
+				data: '登录错误，请重新登录'
+			}
+			return;
+		};
+		let returnData = {};
+		let paperArray = paperId.split(',');
+		if (paperArray.length  === 1) {
+			returnData = await getOnePaperInfo(paperId)
+		} else if (paperArray.length  > 1) {
+			returnData = await getArrayPaperInfo(paperArray)
+		}
+		ctx.response.body = {
+			type: 'true',
+			data: returnData
+		}
+	}
+
+	//获取试卷详情
 	static async getPaperType(ctx, next) {
 		const { account, token } = ctx.query;
 		const isValid = await checkToken(account, token);
@@ -135,3 +160,32 @@ class QuestionBank {
 	}
 }
 module.exports = QuestionBank;
+
+
+async function getOnePaperInfo(paperId) {
+	try {
+		const paperInfo = await selectFromSql('papers', {
+			"id": ` = "${paperId}"`
+		})
+		if (paperInfo && paperInfo[0]) {
+			return paperInfo[0]
+		} else {
+			return {}
+		}
+	} catch (e) {
+		return {}
+	}
+
+}
+async function getArrayPaperInfo(paperId) {
+	try {
+		const paperInfo = await selectFromSql('papers')
+		const returnInfo = paperInfo.filter(oneInfo => {
+			return paperId.indexOf(oneInfo['id']) >= 0
+		})
+		return returnInfo
+	} catch (e) {
+		return []
+	}
+
+}
