@@ -1,11 +1,10 @@
 const path = require('path')
 const { pingpp_app_id, test_key ,live_key} = require('../../bin/config');
 const moment = require('moment');
-const pingpp = require('pingpp')(test_key);
+const pingpp = require('pingpp')(live_key);
 
 const privateUrl = path.resolve(__dirname, "../../bin/private_key.pem")
 
-console.log(privateUrl )
 pingpp.setPrivateKeyPath(privateUrl);
 class Pingpay {
     static async createCharge(ctx,next) {
@@ -43,7 +42,7 @@ class Pingpay {
             });
         });
         const reponseData = await chargePromise;
-        console.log(reponseData);
+        // console.log(reponseData);
         ctx.response.body = {
             type:true,
             data:reponseData

@@ -8,7 +8,7 @@ const sendMail = require('../service/mail')
 class CustomerService {
     static async feedback(ctx, next) {
         const { title, content } = ctx.request.body;
-        console.log(title,content)
+        // console.log(title,content)
         if (!title || !content) {
             ctx.response.body = {
                 type: false,
