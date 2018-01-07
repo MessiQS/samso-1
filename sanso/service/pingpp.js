@@ -48,6 +48,20 @@ class Pingpay {
             data:reponseData
         }
     }
+    static async pingHook(ctx,next){
+        const {type,data} = ctx.request.body;
+        //type
+        // summary.daily.available 上一天 0 点到 23 点 59 分 59 秒的交易金额和交易量统计，在每日 04:00 点左右触发。
+        // summary.weekly.available    上周一 0 点至上周日 23 点 59 分 59 秒的交易金额和交易量统计，在每周一 04:00 点左右触发。
+        // summary.monthly.available   上月一日 0 点至上月末 23 点 59 分 59 秒的交易金额和交易量统计，在每月一日 04:00 点左右触发。
+        // charge.succeeded    支付对象，支付成功时触发。
+        
+        console.log(data)
+        ctx.response.body = {
+            type:true,
+            data:111
+        }
+    }
 }
 module.exports = Pingpay;
 

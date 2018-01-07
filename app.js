@@ -39,7 +39,8 @@ const {
 // } = require('./sanso/service/pay')
 //ping++支付
 const {
-    createCharge
+    createCharge,
+    pingHook
 } = require('./sanso/service/pingpp')
 //链接数据库的类
 const {
@@ -99,6 +100,8 @@ router
     .get('/api/getUserQuestionInfo', getUserQuestionInfo)
     //用户反馈信息
     .post('/api/feedback', feedback)
+    //ping++ hook
+    .post('/api/pingHook', pingHook)
 
 function intervalUpdateUserQuestionInfo(){
     updateUserQuestionInfo();
