@@ -11,6 +11,7 @@ const port = 8080;
 //登录模块
 const {
     login,
+    freeRegistration,
     signin,
     getCode,
     updatePassword,
@@ -61,7 +62,7 @@ app.use(router.routes());
 app.use(serve(__dirname + '/static'));
 
 router
-    .get('/', async(ctx, next) => {
+    .get('/', async (ctx, next) => {
         // 当GET请求时候返回表单页面
         let html = `
       <h1>koa2 request post demo</h1>
@@ -76,21 +77,23 @@ router
         ctx.body = html
     })
     .post('/api/login', login)
+    //免注册用户入口
+    .post('/api/freeRegistration', freeRegistration)
     .post('/api/signin', signin)
-    .post('/api/getcode',getCode)
-    .post('/api/checkcode',checkCode)
-    .post('/api/updatePassword',updatePassword)
-    .post('/api/checkToken',checkToken)
-    .post('/api/checkPassword',checkPassword)//改手机号时候用于验证账号密码
-    .post('/api/updatephone',updatePhone)
+    .post('/api/getcode', getCode)
+    .post('/api/checkcode', checkCode)
+    .post('/api/updatePassword', updatePassword)
+    .post('/api/checkToken', checkToken)
+    .post('/api/checkPassword', checkPassword)//改手机号时候用于验证账号密码
+    .post('/api/updatephone', updatePhone)
     //支付
-    .post('/api/createcharge',createCharge)
+    .post('/api/createcharge', createCharge)
     //获取试卷
-    .get('/api/getpaper',getPaper)
-    .get('/api/papertype',getPaperType)
+    .get('/api/getpaper', getPaper)
+    .get('/api/papertype', getPaperType)
     //获取单套时间
-    .get('/api/getSinglePaperInfo',getSinglePaperInfo)
-        //购买信息更新
+    .get('/api/getSinglePaperInfo', getSinglePaperInfo)
+    //购买信息更新
     .post('/api/updateUserBuyInfo', updateUserBuyInfo)
     //获取购买信息
     .post('/api/getUserBuyInfo', getUserBuyInfo)
@@ -103,9 +106,9 @@ router
     //ping++ hook
     .post('/api/pingHook', pingHook)
 
-function intervalUpdateUserQuestionInfo(){
+function intervalUpdateUserQuestionInfo() {
     updateUserQuestionInfo();
-    setTimeout(intervalUpdateUserQuestionInfo,1000*2*60)
+    setTimeout(intervalUpdateUserQuestionInfo, 1000 * 2 * 60)
 }
 intervalUpdateUserQuestionInfo();
 app.listen(port);

@@ -61,6 +61,23 @@ class Sign {
 			}
 		}
 	};
+	static async freeRegistration(ctx,next){
+		const { account, password } = ctx.request.body;
+		if(account === "test" && password === "2e4f579dd048d15395eb7d2d3d5b9833"){
+			let row = await selectFromSql('user', {
+				'account': `="test"`
+			});
+			ctx.response.body = {
+				type:"true",
+				data:row[0].token
+			}
+		}else{
+			ctx.response.body = {
+				type:"false",
+				data:null
+			}	
+		}
+	}
 	//注册
 	static async signin(ctx, next) {
 		let md5 = crypto.createHash('md5'),
