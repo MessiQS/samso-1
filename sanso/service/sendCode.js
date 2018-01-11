@@ -1,7 +1,7 @@
 
 // const QcloudSms = require("qcloudsms_js");
-// const { wechatConfig } = require('../../bin/config')
-// const { appid, appkey } = wechatConfig
+const { wechatConfig } = require('../../bin/config')
+const { appid, appkey } = wechatConfig
 const crypto = require('crypto')
 const sha256 = crypto.createHash('sha256')
 // const qcloudsms = QcloudSms(appid, appkey);
