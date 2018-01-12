@@ -13,7 +13,7 @@ class Check {
             return false;
         }
         const user = await selectFromSql('user', {
-            account: '= ' + account
+            account: `= "${account}"` 
         });
         if (user && user[0] && user[0].token === token) {
             return true;
