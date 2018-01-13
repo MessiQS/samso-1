@@ -35,6 +35,16 @@ class QuesrtionModel {
             }
             return;
         }
+        
+        const isValid = Check.checkHeader(ctx.request, user_id)
+		if (!isValid) {
+			ctx.response.body = {
+				type: 'false',
+				data: '登录错误，请重新登录'
+			}
+			return;
+        };
+        
         let bankModel = await selectFromSql('question_model', {
             "user_id": `= "${user_id}"`
         })

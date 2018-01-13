@@ -5,10 +5,22 @@
  * 
  */
 const sendMail = require('../service/mail')
+const { checkHeader } = require('../service/check');
+
 class CustomerService {
     static async feedback(ctx, next) {
-        const { title, content } = ctx.request.body;
+        const { title, content, user_id } = ctx.request.body;
         // console.log(title,content)
+
+        const isValid = Check.checkHeader(ctx.request, user_id)
+		if (!isValid) {
+			ctx.response.body = {
+				type: 'false',
+				data: '登录错误，请重新登录'
+			}
+			return;
+        };
+        
         if (!title || !content) {
             ctx.response.body = {
                 type: false,
@@ -17,7 +29,7 @@ class CustomerService {
             return;
         }
         const reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$");
-        if(!reg.test(title)){
+        if (!reg.test(title)) {
             ctx.response.body = {
                 type: false,
                 data: "请填写正确的邮箱地址"

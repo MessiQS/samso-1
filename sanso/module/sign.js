@@ -18,7 +18,6 @@ class Sign {
 	//登录
 	static async login(ctx, next) {
 		const { account, password } = ctx.request.body;
-		// console.log(account, password)
 		let row = await selectFromSql('user', {
 			'account': `="${account}"`
 		});
@@ -61,21 +60,21 @@ class Sign {
 			}
 		}
 	};
-	static async freeRegistration(ctx,next){
+	static async freeRegistration(ctx, next) {
 		const { account, password } = ctx.request.body;
-		if(account === "test" && password === "2e4f579dd048d15395eb7d2d3d5b9833"){
+		if (account === "test" && password === "2e4f579dd048d15395eb7d2d3d5b9833") {
 			let row = await selectFromSql('user', {
 				'account': `="test"`
 			});
 			ctx.response.body = {
-				type:"true",
-				data:row[0].token
+				type: "true",
+				data: row[0].token
 			}
-		}else{
+		} else {
 			ctx.response.body = {
-				type:"false",
-				data:null
-			}	
+				type: "false",
+				data: null
+			}
 		}
 	}
 	//注册
@@ -165,9 +164,7 @@ class Sign {
 	//忘记密码，修改密码
 	static async updatePassword(ctx, next) {
 		let data;
-		const account = ctx.request.body.account || '', //账号，一般为电话号码,
-			oldPassword = ctx.request.body.oldPassword || '',//旧密码，存在就比较
-			password = ctx.request.body.password || ''; //新密码
+		const { account, oldPassword, password } = ctx.request.body //账号，一般为电话号码,
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
 			"account": `="${account}"`
