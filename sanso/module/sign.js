@@ -80,9 +80,7 @@ class Sign {
 	}
 	//注册
 	static async signin(ctx, next) {
-		let md5 = crypto.createHash('md5'),
-			md5_password,
-			data;
+		let data;
 		const account = ctx.request.body.account || '', //账号，一般为电话号码
 			password = ctx.request.body.password || '', //密码
 			vericode = ctx.request.body.vericode || ''; //验证码
@@ -317,6 +315,7 @@ module.exports = Sign
 
 async function setNewUserId() {
 	let length = await getLengthOfTable('user');
+	length = length[0]['count(*)']
 	let zero = '0',
 	useridArr = (zero.repeat(8) + length).split('');
 	while(useridArr.length > 8){
