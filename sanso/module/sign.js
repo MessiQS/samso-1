@@ -9,7 +9,8 @@ const {
 const {
 	selectFromSql,
 	insertToSql,
-	updateToSql
+	updateToSql,
+	getLengthOfTable
 } = new sqlFormat();
 const addLog = require('../serverlog').addLog;
 const sendCode = require('../service/sendCode')
@@ -68,7 +69,7 @@ class Sign {
 			});
 			ctx.response.body = {
 				type: "true",
-				data: row[0].token
+				data: row[0]
 			}
 		} else {
 			ctx.response.body = {
@@ -104,11 +105,12 @@ class Sign {
 			};
 			return;
 		}
+		let user_id = await setNewUserId();
 		data = {
 			name: account,
 			account: account,
 			password: password, //MD5加密密码
-			user_id: new Date().getTime()
+			user_id,
 		};
 		await insertToSql('user', data);
 		ctx.response.body = {
@@ -312,3 +314,14 @@ function getUid() {
 	return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
 }
 module.exports = Sign
+
+async function setNewUserId() {
+	let length = await getLengthOfTable('user');
+	let zero = '0',
+	useridArr = (zero.repeat(8) + length).split('');
+	while(useridArr.length > 8){
+		useridArr.shift()
+		console.log(useridArr)
+	}
+	return 	`SS${useridArr.join('')}`
+}
