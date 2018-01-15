@@ -56,11 +56,44 @@ class Pingpay {
         // summary.monthly.available   上月一日 0 点至上月末 23 点 59 分 59 秒的交易金额和交易量统计，在每月一日 04:00 点左右触发。
         // charge.succeeded    支付对象，支付成功时触发。
         
-        console.log(data)
-        ctx.response.body = {
-            type:true,
-            data:111
+        if(type === "charge.succeeded"){
+            const { body } = data
+            const user_id = body.spliy('_BUY')[0]
+            const bankname = body.spliy('_BUY')[1]
+
+            const selectAccount = await selectFromSql('user', {
+                "user_id": `= "${user_id}"`
+            });
+            let { data_info } = selectAccount[0]
+            data_info = data_info ? JSON.parse(data_info) : {}
+
+            data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
+
+            if (data_info.buyedInfo.indexOf(bankname) < 0) {
+                data_info.buyedInfo.push(bankname)
+            }
+
+            try {
+                await updateToSql('user', {
+                    data_info: JSON.stringify(data_info)
+                }, {
+                        "user_id": ` = "${user_id}"`,
+                    })
+                ctx.response.body = {
+                    type:true,
+                    data:"收到支付"
+                }
+                return true;
+            } catch (err) {
+                ctx.response.body = {
+                    "type": false,
+                    "data": '更新购买失败',
+                };
+                return false;
+            }
+
         }
+
     }
 }
 module.exports = Pingpay;

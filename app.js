@@ -94,7 +94,7 @@ router
     //获取单套时间
     .get('/api/getSinglePaperInfo', getSinglePaperInfo)
     //购买信息更新
-    .post('/api/updateUserBuyInfo', updateUserBuyInfo)
+    // .post('/api/updateUserBuyInfo', updateUserBuyInfo)
     //获取购买信息
     .post('/api/getUserBuyInfo', getUserBuyInfo)
     //刷题之后的更新

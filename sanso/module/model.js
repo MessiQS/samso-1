@@ -136,7 +136,6 @@ class QuesrtionModel {
         if (data_info.buyedInfo.indexOf(bankname) < 0) {
             data_info.buyedInfo.push(bankname)
         }
-        // console.log(data)
 
         try {
             await updateToSql('user', {
