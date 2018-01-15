@@ -1,5 +1,5 @@
 const path = require('path')
-const { pingpp_app_id, test_key ,live_key} = require('../../bin/config');
+const { pingpp_app_id, test_key, live_key } = require('../../bin/config');
 const moment = require('moment');
 const pingpp = require('pingpp')(live_key);
 
@@ -7,8 +7,8 @@ const privateUrl = path.resolve(__dirname, "../../bin/private_key.pem")
 
 pingpp.setPrivateKeyPath(privateUrl);
 class Pingpay {
-    static async createCharge(ctx,next) {
-        const { client_ip, amount, channel ,subject,body} = ctx.request.body;
+    static async createCharge(ctx, next) {
+        const { client_ip, amount, channel, subject, body } = ctx.request.body;
         // ctx.request.body;
         /*
         *   charge参数说明
@@ -21,7 +21,7 @@ class Pingpay {
         *   subject 商品名称 暂定为 该套题的 SPid
         *   body 商品描述信息
         */
-        const chargePromise =  new Promise( (resolve ,reject) => {
+        const chargePromise = new Promise((resolve, reject) => {
             pingpp.charges.create({
                 order_no: getOrderNo(),
                 app: { id: pingpp_app_id },
@@ -34,7 +34,7 @@ class Pingpay {
                 // extra: extra 暂时不需要
             }, function (err, charge) {
                 // YOUR CODE
-                if(err){
+                if (err) {
                     resolve(err);
                     return;
                 };
@@ -44,19 +44,19 @@ class Pingpay {
         const reponseData = await chargePromise;
         // console.log(reponseData);
         ctx.response.body = {
-            type:true,
-            data:reponseData
+            type: true,
+            data: reponseData
         }
     }
-    static async pingHook(ctx,next){
-        const {type,data} = ctx.request.body;
+    static async pingHook(ctx, next) {
+        const { type, data } = ctx.request.body;
         //type
         // summary.daily.available 上一天 0 点到 23 点 59 分 59 秒的交易金额和交易量统计，在每日 04:00 点左右触发。
         // summary.weekly.available    上周一 0 点至上周日 23 点 59 分 59 秒的交易金额和交易量统计，在每周一 04:00 点左右触发。
         // summary.monthly.available   上月一日 0 点至上月末 23 点 59 分 59 秒的交易金额和交易量统计，在每月一日 04:00 点左右触发。
         // charge.succeeded    支付对象，支付成功时触发。
-        
-        if(type === "charge.succeeded"){
+
+        if (type === "charge.succeeded") {
             const { body } = data
             const user_id = body.spliy('_BUY')[0]
             const bankname = body.spliy('_BUY')[1]
@@ -80,8 +80,8 @@ class Pingpay {
                         "user_id": ` = "${user_id}"`,
                     })
                 ctx.response.body = {
-                    type:true,
-                    data:"收到支付"
+                    type: true,
+                    data: "收到支付"
                 }
                 return true;
             } catch (err) {
