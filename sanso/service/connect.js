@@ -13,11 +13,11 @@ const pool = mysql.createPool({
 });
 
 class groupFunctionArray {
-    constructor() {};
+    constructor() { };
     getSql(selectSQL) {
-        addLog(selectSQL,'chat')
+        addLog(selectSQL, 'chat')
         return new Promise((resolve, reject) => {
-            pool.getConnection(function(err, connection) {
+            pool.getConnection(function (err, connection) {
                 if (err) {
                     addLog('链接数据库错误  ' + selectSQL);
                     resolve('connectError');
@@ -43,18 +43,24 @@ class sqlFormat extends groupFunctionArray {
         for (let key in condition) {
             condi = condi + ' ' + key + ' ' + condition[key];
         };
-        if(!condition){
+        if (!condition) {
             return super.getSql(selectSql);
-        }else{
+        } else {
             return super.getSql(selectSql + condi);
         }
     };
     getLengthOfTable(tableName, condition) {
         let condi = " WHERE ",
             selectSql = "SELECT count(*) FROM " + tableName;
-        for (let key in condition) {
-            condi = condi + ' ' + key + ' ' + condition[key];
-        };
+        if (condition) {
+            for (let key in condition) {
+                condi = condi + ' ' + key + ' ' + condition[key];
+            };
+        }else{
+            condi = ''
+        }
+
+        console.log(selectSql + condi)
         return super.getSql(selectSql + condi);
     }
     insertToSql(tableName, data) {
@@ -82,9 +88,9 @@ class sqlFormat extends groupFunctionArray {
                 condi = ' (';
             condiArray.forEach((key, index, valuearray) => {
                 let dataValue;
-                if(key==='msg'){
+                if (key === 'msg') {
                     dataValue = value[key].replace(/"/g, '\"').replace(/'/g, "\'\'");
-                }else{
+                } else {
                     dataValue = value[key];
                 }
                 if (index !== valuearray.length - 1) {
@@ -104,7 +110,7 @@ class sqlFormat extends groupFunctionArray {
             if (index === keyArray.length - 1) {
                 condi = condi + value + ' ' + condition[value];
             } else {
-                condi = condi + 　value + ' ' + condition[value] + ',';
+                condi = condi + value + ' ' + condition[value] + ',';
             }
         });
         return super.getSql(basic + ' ' + condi + ')');

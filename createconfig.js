@@ -6,7 +6,8 @@ const {
 	selectFromSql,
 	getSql,
 	insertToSql,
-	updateToSql
+	updateToSql,
+	getLengthOfTable
 } = new sqlFormat();
 function addConfig() {
 	// body...
@@ -31,4 +32,8 @@ function addConfig() {
 	})
 
 }
-addConfig();
+// addConfig();
+(async () => {
+	const len = await getLengthOfTable('user')
+	console.log(len[0]['count(*)'])
+})()

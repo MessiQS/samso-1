@@ -3,7 +3,6 @@
 const { wechatConfig } = require('../../bin/config')
 const { appid, appkey } = wechatConfig
 const crypto = require('crypto')
-const sha256 = crypto.createHash('sha256')
 // const qcloudsms = QcloudSms(appid, appkey);
 
 // const ssender = qcloudsms.SmsSingleSender();
@@ -29,7 +28,7 @@ function sendCode(data) {
     // var post_data = querystring.stringify(postBody);
     var options = {
         method: 'post',
-        uri:url,
+        uri: url,
         body: postBody,
         headers: {
             'User-Agent': 'Request-Promise'
@@ -40,6 +39,7 @@ function sendCode(data) {
 }
 
 function getPostBody({ account, code }, random) {
+    const sha256 = crypto.createHash('sha256')
     const strTime = parseInt(new Date().getTime() / 1000, 10); //unix时间戳
     const time = 2;
     const sigContent = `appkey=${appkey}&random=${random}&time=${strTime}&mobile=${account}`
@@ -51,8 +51,8 @@ function getPostBody({ account, code }, random) {
             "nationcode": "86", //国家码
             "mobile": account //手机号码
         },
-        "sign":"杉索科技",
-        "tpl_id":"67331",
+        "sign": "杉索科技",
+        "tpl_id": "67331",
         "type": 0, //0:普通短信;1:营销短信（强调：要按需填值，不然会影响到业务的正常使用）
         "params": [
             code,
