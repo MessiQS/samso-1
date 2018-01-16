@@ -58,8 +58,15 @@ class Pingpay {
 
         if (type === "charge.succeeded") {
             const { body } = data
-            const user_id = body.spliy('_BUY_')[0]
-            const bankname = body.spliy('_BUY_')[1]
+            if(!body ||  body.split('_BUY_').length < 2){
+                ctx.response.body = {
+                    "type": false,
+                    "data": '测试成功',
+                };
+                return 
+            }
+            const user_id = body.split('_BUY_')[0]
+            const bankname = body.split('_BUY_')[1]
 
             const selectAccount = await selectFromSql('user', {
                 "user_id": `= "${user_id}"`
