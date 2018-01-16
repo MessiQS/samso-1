@@ -58,8 +58,8 @@ class Pingpay {
 
         if (type === "charge.succeeded") {
             const { body } = data
-            const user_id = body.spliy('_BUY')[0]
-            const bankname = body.spliy('_BUY')[1]
+            const user_id = body.spliy('_BUY_')[0]
+            const bankname = body.spliy('_BUY_')[1]
 
             const selectAccount = await selectFromSql('user', {
                 "user_id": `= "${user_id}"`
