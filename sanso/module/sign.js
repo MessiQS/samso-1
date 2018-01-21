@@ -118,7 +118,14 @@ class Sign {
 	};
 	//验证码
 	static async getCode(ctx, next) {
-		const account = ctx.request.body.account,
+		const { account, isRegistered } = ctx.request.body,
+		/**
+		 * 
+		 * {
+		 * @param account 账号
+		 * @param isRegistered 代表已注册也允许发，默认为不允许
+		 * }
+		 */
 			phoneNumberReg = new RegExp(/^1(3|4|5|7|8)\d{9}$/);
 		if (!account) {
 			ctx.response.body = {
@@ -137,13 +144,22 @@ class Sign {
 		const selectAccount = await selectFromSql('user', {
 			"account": `="${account}"`
 		});
+		if (selectAccount && selectAccount[0] && !isRegistered) {
+			ctx.response.body = {
+				type: false,
+				data: '账号已注册，请选择登录或忘记密码'
+			};
+			return;
+		}
+
 		let code = Array(4).fill(1).map(res => parseInt(Math.random() * 10, 10)).join('');
 		codeObj[account] = code;
-		const codeResponse = await sendCode({
-			code,
-			account
-		})
-		if (codeResponse.errmsg === "OK") {
+		// const codeResponse = await sendCode({
+		// 	code,
+		// 	account
+		// })
+		// if (codeResponse.errmsg === "OK") {
+		if (true) {
 			ctx.response.body = {
 				type: true,
 				data: code
@@ -317,10 +333,10 @@ async function setNewUserId() {
 	let length = await getLengthOfTable('user');
 	length = length[0]['count(*)']
 	let zero = '0',
-	useridArr = (zero.repeat(8) + length).split('');
-	while(useridArr.length > 8){
+		useridArr = (zero.repeat(8) + length).split('');
+	while (useridArr.length > 8) {
 		useridArr.shift()
 		console.log(useridArr)
 	}
-	return 	`SS${useridArr.join('')}`
+	return `SS${useridArr.join('')}`
 }
