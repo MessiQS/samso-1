@@ -7,6 +7,7 @@
 const sendMail = require('../service/mail')
 const { checkHeader } = require('../service/check');
 const send = require('koa-send'); // "koa-send"
+const moment = require('moment')
 
 class CustomerService {
     static async feedback(ctx, next) {
@@ -41,6 +42,21 @@ class CustomerService {
         //给对方一个反馈
         sendMail(title, `感谢您的反馈！`, "客服会在短时间内对此问题做出调整，希望能给您带来更好的产品体验！")
         ctx.response.body = result
+    }
+
+    static async getUpdate(ctx, next) {
+        // const { version } = ctx.query
+        const res = {
+            version: "1.21",
+            size: "1.61M",
+            date: moment().format('YYYY/MM/DD'),
+            updateInfo: ['UI改动', '修复BUG若干'],
+            url: "https://shuatiapp.cn"
+        }
+        ctx.response.body = {
+            type: true,
+            data: res
+        }
     }
 
     static async getNewVersion(ctx, next) {
