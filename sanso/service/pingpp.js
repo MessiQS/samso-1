@@ -2,6 +2,16 @@ const path = require('path')
 const { pingpp_app_id, test_key, live_key } = require('../../bin/config');
 const moment = require('moment');
 const pingpp = require('pingpp')(live_key);
+const {
+    sqlFormat
+} = require('./connect');
+
+const {
+    selectFromSql,
+    insertToSql,
+    updateToSql,
+    getLengthOfTable
+} = new sqlFormat();
 
 const privateUrl = path.resolve(__dirname, "../../bin/private_key.pem")
 
@@ -56,10 +66,14 @@ class Pingpay {
         // summary.monthly.available   上月一日 0 点至上月末 23 点 59 分 59 秒的交易金额和交易量统计，在每月一日 04:00 点左右触发。
         // charge.succeeded    支付对象，支付成功时触发。
 
+
+
         if (type === "charge.succeeded") {
-            const { body } = data
-            const user_id = body.spliy('_BUY')[0]
-            const bankname = body.spliy('_BUY')[1]
+            const { object:{body} } = data
+            const keyArr = body.split('_BUY_')
+            const user_id = keyArr[0]
+            const bankname =keyArr[1]
+            console.log(keyArr,body)
 
             const selectAccount = await selectFromSql('user', {
                 "user_id": `= "${user_id}"`
