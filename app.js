@@ -51,7 +51,8 @@ const {
     selectFromSql
 } = new sqlFormat();
 const {
-    feedback
+    feedback,
+    getNewVersion
 } = require('./sanso/module/customerServer')
 
 const app = new Koa();
@@ -103,6 +104,8 @@ router
     .get('/api/getUserQuestionInfo', getUserQuestionInfo)
     //用户反馈信息
     .post('/api/feedback', feedback)
+    //下载新版本
+    .get('/api/getNewVersion',getNewVersion)
     //ping++ hook
     .post('/api/pingHook', pingHook)
 
