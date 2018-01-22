@@ -51,7 +51,7 @@ class CustomerService {
             size: "1.61M",
             date: moment().format('YYYY/MM/DD'),
             updateInfo: ['UI改动', '修复BUG若干'],
-            url: "https://shuatiapp.cn"
+            url: "https://shuatiapp.cn/api/getNewVersion"
         }
         ctx.response.body = {
             type: true,
@@ -60,7 +60,7 @@ class CustomerService {
     }
 
     static async getNewVersion(ctx, next) {
-        var fileName = 'PotPlayer_1.7.7145.0_Setup.exe';
+        var fileName = 'app-release.apk';
         ctx.attachment(fileName);
         await send(ctx, fileName, { root: __dirname + './../../version' });
     }
