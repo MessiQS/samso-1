@@ -166,7 +166,7 @@ class Sign {
 		} else {
 			ctx.response.body = {
 				type: false,
-				data: "发送验证码失败，请于1分钟后重试"
+				data: codeResponse.errmsg
 			};
 		}
 
