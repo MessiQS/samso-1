@@ -35,12 +35,12 @@ class Sign {
 				};
 			} else {
 				let uid = getUid();
-				let uodatesql = await updateToSql('user', {
+				let updatesql = await updateToSql('user', {
 					token: uid
 				}, {
-						"account": "= " + account
+						"account": ` = "${account} "`
 					});
-				if (uodatesql) {
+				if (updatesql) {
 					let userInfo,
 						user_id = row[0].user_id;
 					userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
@@ -119,13 +119,13 @@ class Sign {
 	//验证码
 	static async getCode(ctx, next) {
 		const { account, isRegistered } = ctx.request.body,
-		/**
-		 * 
-		 * {
-		 * @param account 账号
-		 * @param isRegistered 代表已注册也允许发，默认为不允许
-		 * }
-		 */
+			/**
+			 * 
+			 * {
+			 * @param account 账号
+			 * @param isRegistered 代表已注册也允许发，默认为不允许
+			 * }
+			 */
 			phoneNumberReg = new RegExp(/^1(3|4|5|7|8)\d{9}$/);
 		if (!account) {
 			ctx.response.body = {
