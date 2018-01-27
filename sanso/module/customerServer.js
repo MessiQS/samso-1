@@ -66,7 +66,7 @@ class CustomerService {
 
 
         try {
-            const rows = selectFromSql('error_question', {
+            const rows = await selectFromSql('error_question', {
                 id: ` = "${id}"`
             })
             if (rows.length > 0) {
@@ -98,7 +98,7 @@ class CustomerService {
             }
         }
     }
-    
+
     static async getUpdate(ctx, next) {
         // const { version } = ctx.query
         const res = {
