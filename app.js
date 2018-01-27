@@ -53,7 +53,8 @@ const {
 const {
     feedback,
     getUpdate,
-    getNewVersion
+    getNewVersion,
+    wrongFeedBack,
 } = require('./sanso/module/customerServer')
 
 const app = new Koa();
@@ -105,6 +106,8 @@ router
     .get('/api/getUserQuestionInfo', getUserQuestionInfo)
     //用户反馈信息
     .post('/api/feedback', feedback)
+    //错题反馈
+    .post('/api/wrongFeedBack',wrongFeedBack)
     //获取更新信息
     .get('/api/getUpdate',getUpdate)
     //下载新版本

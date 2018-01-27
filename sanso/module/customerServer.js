@@ -8,6 +8,15 @@ const sendMail = require('../service/mail')
 const { checkHeader } = require('../service/check');
 const send = require('koa-send'); // "koa-send"
 const moment = require('moment')
+//链接数据库的类
+const {
+	sqlFormat
+} = require('../service/connect');
+const {
+	selectFromSql,
+    insertToSql,
+    updateToSql
+} = new sqlFormat();
 
 class CustomerService {
     static async feedback(ctx, next) {
@@ -44,6 +53,52 @@ class CustomerService {
         ctx.response.body = result
     }
 
+    static async wrongFeedBack(ctx, next) {
+        const { title, id, question_number, user_id } = ctx.request.body;
+        const isValid = await checkHeader(ctx.request, user_id)
+        if (!isValid) {
+            ctx.response.body = {
+                type: 'false',
+                data: '登录错误，请重新登录'
+            }
+            return;
+        };
+
+
+        try {
+            const rows = selectFromSql('error_question', {
+                id: ` = "${id}"`
+            })
+            if (rows.length > 0) {
+                let user_id_array = JSON.parse(rows[0].user_id_array)
+                if (user_id_array.indexOf(id) < 0) {
+                    user_id_array.push(user_id)
+                    await updateToSql('error_question', {
+                        user_id_array: JSON.stringify(user_id_array)
+                    }, {
+                            id: ` = "${id}"`
+                        })
+                }
+            } else {
+                await insertToSql('error_question', {
+                    title, id, question_number,
+                    user_id_array: JSON.stringify([user_id])
+                })
+
+            }
+            ctx.response.body = {
+                type: true,
+                data: "反馈成功"
+            }
+        } catch (e) {
+            console.log(e)
+            ctx.response.body = {
+                type: true,
+                data: "反馈失败，请稍后重试"
+            }
+        }
+    }
+    
     static async getUpdate(ctx, next) {
         // const { version } = ctx.query
         const res = {
