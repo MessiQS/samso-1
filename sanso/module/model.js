@@ -36,7 +36,7 @@ class QuesrtionModel {
             return;
         }
 
-        const isValid = Check.checkHeader(ctx.request, user_id)
+        const isValid = await Check.checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
                 type: 'false',
@@ -67,7 +67,7 @@ class QuesrtionModel {
     static async getUpdateInfoCache(ctx, next) {
         const data = ctx.request.body;
         const { user_id } = data
-        const isValid = Check.checkHeader(ctx.request, user_id)
+        const isValid = await Check.checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
                 "type": false,
@@ -92,7 +92,7 @@ class QuesrtionModel {
 
     static async getUserBuyInfo(ctx, next) {
         const { user_id } = ctx.request.body;
-        const isValid = Check.checkHeader(ctx.request, user_id)
+        const isValid = await Check.checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
                 "type": false,

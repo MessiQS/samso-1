@@ -14,7 +14,7 @@ class CustomerService {
         const { title, content, user_id } = ctx.request.body;
         // console.log(title,content)
 
-        const isValid = Check.checkHeader(ctx.request, user_id)
+        const isValid = await checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
                 type: 'false',
