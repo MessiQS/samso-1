@@ -8,6 +8,8 @@ const sendMail = require('../service/mail')
 const { checkHeader } = require('../service/check');
 const send = require('koa-send'); // "koa-send"
 const moment = require('moment')
+const fs = require('fs')
+const versionPath = "./bin/version.json"
 //链接数据库的类
 const {
 	sqlFormat
@@ -17,6 +19,36 @@ const {
     insertToSql,
     updateToSql
 } = new sqlFormat();
+
+class AboutVersion {
+    static getAllVersion() {
+        const version = fs.readFileSync(versionPath)
+        return JSON.parse(version)
+    }
+
+    static getLastVersion() {
+        const version = fs.readFileSync(versionPath)
+        const versionArray = JSON.parse(version)
+        const last = versionArray.length ? versionArray.length - 1 : 0;
+        return versionArray[last]
+    }
+    static updateAppVersion(info) {
+        const version = fs.readFileSync(versionPath)
+        const versionArray = JSON.parse(version)
+        versionArray.push(info)
+        fs.writeFileSync(versionPath, JSON.stringify(versionArray))
+    }
+}
+// const info1 = {
+//     "version": "1.21",
+//     "size": "1.61M",
+//     "date": "2015-11-11",
+//     "updateInfo": [
+//         "UI改动",
+//         "修复BUG若干"
+//     ],
+//     "url": "https://shuatiapp.cn/api/getNewVersion"
+// }
 
 class CustomerService {
     static async feedback(ctx, next) {
@@ -101,13 +133,7 @@ class CustomerService {
 
     static async getUpdate(ctx, next) {
         // const { version } = ctx.query
-        const res = {
-            version: "1.21",
-            size: "1.61M",
-            date: moment().format('YYYY/MM/DD'),
-            updateInfo: ['UI改动', '修复BUG若干'],
-            url: "https://shuatiapp.cn/api/getNewVersion"
-        }
+        const res = AboutVersion.getLastVersion()
         ctx.response.body = {
             type: true,
             data: res

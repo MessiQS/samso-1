@@ -81,9 +81,7 @@ class Sign {
 	//注册
 	static async signin(ctx, next) {
 		let data;
-		const account = ctx.request.body.account || '', //账号，一般为电话号码
-			password = ctx.request.body.password || '', //密码
-			vericode = ctx.request.body.vericode || ''; //验证码
+		const { account, password, vericode } = ctx.request.body
 		//检测是否已经注册
 		const selectAccount = await selectFromSql('user', {
 			"account": `="${account}"`
@@ -99,7 +97,7 @@ class Sign {
 		if (codeObj[account] !== vericode) {
 			ctx.response.body = {
 				"type": false,
-				"data": '验证码不正确',
+				"data": '验证码错误，请重试',
 			};
 			return;
 		}
@@ -174,7 +172,7 @@ class Sign {
 			if (codeObj[account] === code) {
 				delete codeObj[account];
 			};
-		}, 60 * 1000)
+		}, 5 * 60 * 1000)
 	}
 	//忘记密码，修改密码
 	static async updatePassword(ctx, next) {

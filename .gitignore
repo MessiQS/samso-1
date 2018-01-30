@@ -6,6 +6,7 @@
 /config
 /Archive
 /logs
+/mysqlupdate
 packjson-lock.json
 version/PotPlayer_1.7.7145.0_Setup.exe
 version/

@@ -90,6 +90,23 @@ class QuestionBank {
 			data: typeObject
 		}
 	}
+
+	//更新试卷版本
+	static async updatePaperVersion(id) {
+		const paper = await selectFromSql('papers', {
+			id: ` = "${id}"`
+		})
+		if (!paper) {
+			return
+		}
+		let { version } = paper[0]
+		version = `${parseInt(version) + 1}.0`
+		await updateToSql('papers', {
+			version
+		}, {
+				id: ` = "${id}"`
+			})
+	}
 }
 module.exports = QuestionBank;
 

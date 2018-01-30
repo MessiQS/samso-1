@@ -41,7 +41,7 @@ function sendCode(data) {
 function getPostBody({ account, code }, random) {
     const sha256 = crypto.createHash('sha256')
     const strTime = parseInt(new Date().getTime() / 1000, 10); //unix时间戳
-    const time = 2;
+    const time = 5;
     const sigContent = `appkey=${appkey}&random=${random}&time=${strTime}&mobile=${account}`
     sha256.update(sigContent)
     const sig = sha256.digest('hex')
