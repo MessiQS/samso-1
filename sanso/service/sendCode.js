@@ -19,7 +19,7 @@ const crypto = require('crypto')
 
 
 const querystring = require('querystring');
-var rp = require('request-promise');
+const rp = require('request-promise');
 
 function sendCode(data) {
     const random = getUid();

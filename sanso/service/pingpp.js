@@ -5,6 +5,7 @@ const pingpp = require('pingpp')(live_key);
 const {
     sqlFormat
 } = require('./connect');
+const rp = require('request-promise');
 
 const {
     selectFromSql,
@@ -108,6 +109,27 @@ class Pingpay {
 
         }
 
+    }
+    static async applePay(ctx, next){
+        const body = ctx.request.body;
+        // console.log(body)
+        
+        const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
+        var options = {
+            method: 'post',
+            uri,
+            body:body.receipt,
+            headers: {
+                'User-Agent': 'Request-Promise'
+            },
+            json: true
+        };
+        const response = await rp(options)
+        // console.log(response)
+        ctx.response.body = {
+            type:true,
+            data:response
+        }
     }
 }
 module.exports = Pingpay;

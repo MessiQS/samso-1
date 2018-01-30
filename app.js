@@ -41,7 +41,8 @@ const {
 //ping++支付
 const {
     createCharge,
-    pingHook
+    pingHook,
+    applePay
 } = require('./sanso/service/pingpp')
 //链接数据库的类
 const {
@@ -114,6 +115,8 @@ router
     .get('/api/getNewVersion',getNewVersion)
     //ping++ hook
     .post('/api/pingHook', pingHook)
+    //apply Pay
+    .post('/api/applePay',applePay)
 
 function intervalUpdateUserQuestionInfo() {
     updateUserQuestionInfo();
