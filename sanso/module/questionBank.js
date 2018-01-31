@@ -152,21 +152,32 @@ async function transObjToProvice(paperNameArray) {
 	let typeObject = [];
 
 	for (let key in paperNameArray) {
-		let result = paperNameArray[key], typeName;
+		let result = paperNameArray[key],
+			typeName,
+			province;
 		const { title } = result;
 		if (title.indexOf('国家') >= 0) {
 			typeName = '国考';
+			province = "国家"
 		} else if (isCity(title, quArray).type) {
 			let index = isCity(title, quArray).idx;
 			typeName = quArray[index] + '区考';
+			province = quArray[index]
 		} else if (isCity(title, cityArray).type) {
 			let index = isCity(title, cityArray).idx;
 			typeName = cityArray[index] + '市考';
+			province = cityArray[index]
 		} else {
 			let idx = checkProvince(title);
 			typeName = provinceArray[idx] + '省考';
+			province = provinceArray[idx]
 		};
-		typeObject = pushInType(typeObject, typeName, result);
+		typeObject = pushInType({
+			typeObject,
+			typeName,
+			result,
+			province,
+		});
 	}
 	return typeObject
 
@@ -199,19 +210,20 @@ async function transObjToProvice(paperNameArray) {
 		return index;
 	}
 
-	function pushInType(arr, key, info) {
+	function pushInType({ typeObject, typeName, result, province }) {
 		//检测有没有这个区的，如果没有就新建
-		if (!arr.some((res) => {
-			if (res.title === key) {
-				res.data.push(info)
+		if (!typeObject.some((res) => {
+			if (res.title === typeName) {
+				res.data.push(result)
 			}
-			return res.title === key;
+			return res.title === typeName;
 		})) {
-			arr.push({
-				title: key,
-				data: [info]
+			typeObject.push({
+				title: typeName,
+				province,
+				data: [result]
 			})
 		}
-		return arr
+		return typeObject
 	}
 }
