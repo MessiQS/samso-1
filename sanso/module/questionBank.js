@@ -34,7 +34,7 @@ class QuestionBank {
 			}
 			return;
 		}
-		checkBuy(user_id, paperId)
+		// checkBuy(user_id, paperId)
 		const questionArray = await selectFromSql('question_banks', {
 			'FIND_IN_SET': '("' + provinceObjectCache[paperId].title + '",`title`)',
 			'ORDER BY': ` question_number`
