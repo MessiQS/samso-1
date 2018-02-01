@@ -215,9 +215,9 @@ async function updateUserInfo(questionInfoByUserid, user_id) {
         } else if (type === "wrong") {
             thisQname['wrong'] = thisQname['wrong'] + 1;
         }
-        thisQname.lastDateTime = lastDateTime
-        thisQname.firstDateTime = firstDateTime
-        thisQname.record = record
+        thisQname.lastDateTime = lastDateTime || thisQname.lastDateTime
+        thisQname.firstDateTime = firstDateTime || thisQname.firstDateTime
+        thisQname.record = record || thisQname.record
     })
 
     if (!isAdd) {
