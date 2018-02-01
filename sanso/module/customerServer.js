@@ -58,7 +58,7 @@ class CustomerService {
         const isValid = await checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
-                type: 'false',
+                type: false,
                 data: '登录错误，请重新登录'
             }
             return;
@@ -90,7 +90,7 @@ class CustomerService {
         const isValid = await checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
-                type: 'false',
+                type: false,
                 data: '登录错误，请重新登录'
             }
             return;

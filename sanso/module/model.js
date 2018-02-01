@@ -30,7 +30,7 @@ class QuesrtionModel {
         */
         if (!user_id) {
             ctx.response.body = {
-                type: 'false',
+                type: false,
                 data: '请添加用户id'
             }
             return;
@@ -39,7 +39,7 @@ class QuesrtionModel {
         const isValid = await Check.checkHeader(ctx.request, user_id)
         if (!isValid) {
             ctx.response.body = {
-                type: 'false',
+                type: false,
                 data: '登录错误，请重新登录'
             }
             return;

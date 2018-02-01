@@ -20,14 +20,14 @@ class QuestionBank {
 
 		if (!isValid) {
 			ctx.response.body = {
-				type: 'false',
+				type: false,
 				data: '登录错误，请重新登录'
 			}
 			return;
 		};
 		if (!paperId || !provinceObjectCache[paperId]) {
 			ctx.response.body = {
-				type: 'false',
+				type: false,
 				data: '试卷id错误'
 			}
 			return;
@@ -37,13 +37,13 @@ class QuestionBank {
 		});
 		if (!questionArray) {
 			ctx.response.body = {
-				type: 'false',
+				type: false,
 				data: '发生错误，请重试'
 			}
 			return;
 		};
 		ctx.response.body = {
-			type: 'true',
+			type: true,
 			data: questionArray
 		}
 	}
@@ -53,7 +53,7 @@ class QuestionBank {
 		const isValid = await checkHeader(ctx.request, user_id);
 		if (!isValid) {
 			ctx.response.body = {
-				type: 'false',
+				type: false,
 				data: '登录错误，请重新登录'
 			}
 			return;
@@ -66,7 +66,7 @@ class QuestionBank {
 			returnData = await getArrayPaperInfo(paperArray)
 		}
 		ctx.response.body = {
-			type: 'true',
+			type: true,
 			data: returnData
 		}
 	}
@@ -77,7 +77,7 @@ class QuestionBank {
 		const isValid = await checkHeader(ctx.request, user_id);
 		if (!isValid) {
 			ctx.response.body = {
-				type: 'false',
+				type: false,
 				data: '登录错误，请重新登录'
 			}
 			return;

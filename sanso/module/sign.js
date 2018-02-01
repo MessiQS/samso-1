@@ -68,12 +68,12 @@ class Sign {
 				'account': `="test"`
 			});
 			ctx.response.body = {
-				type: "true",
+				type: true,
 				data: row[0]
 			}
 		} else {
 			ctx.response.body = {
-				type: "false",
+				type: false,
 				data: null
 			}
 		}
