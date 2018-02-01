@@ -120,6 +120,8 @@ class CustomerService {
                 })
 
             }
+            sendMail('kefu@shuatiapp.cn', `来自用户 ${user_id} 的错题反馈`,
+                `反馈的错题 题目为 ${title} ,ID为 ${id} ,题号为 ${question_number}`)
             ctx.response.body = {
                 type: true,
                 data: "反馈成功"
