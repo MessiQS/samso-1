@@ -79,7 +79,7 @@ class CustomerService {
             }
             return;
         }
-        const result = await sendMail('kefu@shuatiapp.cn', `来自用户 ${title} 的反馈信息`, content)
+        const result = await sendMail('kefu@shuatiapp.cn', `来自用户 ${title} 的反馈信息`, `${user_id}说${content}`)
         //给对方一个反馈
         sendMail(title, `感谢您的反馈！`, "客服会在短时间内对此问题做出调整，希望能给您带来更好的产品体验！")
         ctx.response.body = result

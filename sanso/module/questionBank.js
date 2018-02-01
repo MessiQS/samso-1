@@ -11,6 +11,8 @@ const {
 } = new sqlFormat();
 const { checkHeader } = require('../service/check');
 const { provinceCache } = require('./global');
+const sendMail = require('../service/mail')
+
 
 class QuestionBank {
 	static async getPaper(ctx, next) {
@@ -32,6 +34,7 @@ class QuestionBank {
 			}
 			return;
 		}
+		checkBuy(user_id, paperId)
 		const questionArray = await selectFromSql('question_banks', {
 			'FIND_IN_SET': '("' + provinceObjectCache[paperId].title + '",`title`)',
 			'ORDER BY': ` question_number`
@@ -226,5 +229,18 @@ async function transObjToProvice(paperNameArray) {
 			})
 		}
 		return typeObject
+	}
+}
+
+async function checkBuy({ user_id, paperId }) {
+	let userRows = selectFromSql('user', {
+		user_id: ` = "${user_id}"`
+	})
+	let user = userRows[0];
+	let dataInfo = user['data_info'] ? JSON.parse(user['data_info']) : {}
+	let { buyedInfo } = dataInfo
+	buyedInfo = buyedInfo || []
+	if (buyedInfo.indexOf(paperId) < 0) {
+		sendMail('kefu@shuatiapp.cn', `用户 ${user_id} 夸权限购买`, `购买内容为 paperId = ${paperId},他已经购买的项目有${buyedInfo.join()}`)
 	}
 }
