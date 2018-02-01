@@ -240,7 +240,13 @@ async function checkBuy({ user_id, paperId }) {
 	let dataInfo = user['data_info'] ? JSON.parse(user['data_info']) : {}
 	let { buyedInfo } = dataInfo
 	buyedInfo = buyedInfo || []
-	if (buyedInfo.indexOf(paperId) < 0) {
+	//获取免费的试卷id
+	let freeRows = await selectFromSql('papers', {
+		price: ` = "0.00"`
+	})
+	freeIdArray = freeRows.map(row => row.id)
+	
+	if (buyedInfo.indexOf(paperId) < 0 && freeIdArray.indexOf(paperId) < 0) {
 		sendMail('kefu@shuatiapp.cn', `用户 ${user_id} 夸权限购买`, `购买内容为 paperId = ${paperId},他已经购买的项目有${buyedInfo.join()}`)
 	}
 }
