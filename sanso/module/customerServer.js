@@ -106,7 +106,8 @@ class CustomerService {
                 if (user_id_array.indexOf(id) < 0) {
                     user_id_array.push(user_id)
                     await updateToSql('error_question', {
-                        user_id_array: JSON.stringify(user_id_array)
+                        user_id_array: JSON.stringify(user_id_array),
+                        dateTime: moment().format("YYYY-MM-DD HH:mm:ss")
                     }, {
                             id: ` = "${id}"`
                         })
@@ -114,7 +115,8 @@ class CustomerService {
             } else {
                 await insertToSql('error_question', {
                     title, id, question_number,
-                    user_id_array: JSON.stringify([user_id])
+                    user_id_array: JSON.stringify([user_id]),
+                    dateTime: moment().format("YYYY-MM-DD HH:mm:ss")
                 })
 
             }

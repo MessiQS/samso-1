@@ -77,7 +77,7 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
-        if (temporaryQuesInfo.length >= 3) {
+        if (temporaryQuesInfo.length >= 1) {
             updateUserQuestionInfo()
         }
         ctx.response.body = {
@@ -129,6 +129,8 @@ class QuesrtionModel {
             "user_id": `= "${user_id}"`
         });
         let { data_info } = selectAccount[0]
+
+        
         data_info = data_info ? JSON.parse(data_info) : {}
 
         data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
@@ -187,6 +189,7 @@ async function updateUserInfo(questionInfoByUserid, user_id) {
     if (selectAccount && selectAccount[0]) {
         isAdd = false
     }
+    // console.log(selectAccount[0].detail)
     let detail = selectAccount && selectAccount[0] ? JSON.parse(selectAccount[0].detail) : {}
     questionInfoByUserid.forEach(res => {
         const { bankname, qname, user_id } = res
@@ -208,7 +211,12 @@ async function updateUserInfo(questionInfoByUserid, user_id) {
         }
     })
     questionInfoByUserid.forEach(singleInfo => {
-        const { bankname, qname, type, lastDateTime, firstDateTime, record } = singleInfo
+        let { bankname, qname, type, lastDateTime, firstDateTime, record } = singleInfo
+        qname = Number(qname)
+        lastDateTime = Number(lastDateTime)
+        firstDateTime = Number(firstDateTime)
+        record = record ? JSON.parse(record) : record
+        
         let thisQname = detail[bankname][qname]
         if (type === "right") {
             thisQname['right'] = thisQname['right'] + 1;
