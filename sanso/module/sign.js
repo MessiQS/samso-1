@@ -302,7 +302,7 @@ class Sign {
 		const isSuccess = await updateToSql('user', {
 			"account": account,
 		}, {
-				"account": ` = ${oldAccount}`
+				"account": ` = "${oldAccount}"`
 			});
 		if (isSuccess) {
 			ctx.response.body = {
