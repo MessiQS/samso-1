@@ -197,16 +197,17 @@ async function updateUserInfo(questionInfoByUserid, user_id) {
             detail[bankname][qname] = {
                 user_id,
                 bankname,
-                qname,
+                qname: parseInt(qname, 10),
+                record: '',
                 right: 0,
                 wrong: 0,
                 weighted: 0,
-                dateTime: new Date().getTime()
+                dateTime: parseInt(new Date().getTime(), 10)
             }
         }
     })
     questionInfoByUserid.forEach(singleInfo => {
-        const { bankname, qname, type, dateTime } = singleInfo
+        const { bankname, qname, type, dateTime, record } = singleInfo
         let thisQname = detail[bankname][qname]
         if (type === "right") {
             thisQname['right'] = thisQname['right'] + 1;
@@ -214,6 +215,7 @@ async function updateUserInfo(questionInfoByUserid, user_id) {
             thisQname['wrong'] = thisQname['wrong'] + 1;
         }
         thisQname.dateTime = dateTime
+        thisQname.record = record
     })
 
     if (!isAdd) {
