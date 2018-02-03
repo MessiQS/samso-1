@@ -22,7 +22,8 @@ const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, deal
 class QuesrtionModel {
     //获取用户刷题情况
     static async getUserQuestionInfo(ctx, next) {
-        const { user_id, bankname, dateTime, isDataDefault, isBankDefault } = ctx.query
+        const { user_id } = ctx.query
+        //bankname, dateTime, isDataDefault, isBankDefault 
         /*
         *用户刷题情况包含
         *最近几日刷题情况
@@ -45,22 +46,14 @@ class QuesrtionModel {
             return;
         };
 
-        let bankModel = await selectFromSql('question_model', {
+        let modelArray = await selectFromSql('question_model', {
             "user_id": `= "${user_id}"`
         })
+        let responseData = setUserQuestionInfo(modelArray)
 
-        if (bankModel && bankModel[0] && bankModel[0].detail) {
-            ctx.response.body = {
-                type: true,
-                data: JSON.parse(bankModel[0].detail)
-            }
-            return;
-        } else {
-            ctx.response.body = {
-                type: true,
-                data: {}
-            }
-            return;
+        ctx.response.body = {
+            type: true,
+            data: responseData
         }
     }
 
@@ -130,7 +123,7 @@ class QuesrtionModel {
         });
         let { data_info } = selectAccount[0]
 
-        
+
         data_info = data_info ? JSON.parse(data_info) : {}
 
         data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
@@ -167,171 +160,56 @@ async function updateUserQuestionInfo() {
     //globalData:Array[]
     let copyGlobalData = [].concat(temporaryQuesInfo);
     temporaryQuesInfo.length = 0;
-    //按照userid存储刷题信息
-    let questionInfoByUserid = {}
-    copyGlobalData.forEach(info => {
-        const user_id = info.user_id || 'SS9999999';
-        if (!questionInfoByUserid['user_id']) {
-            questionInfoByUserid[user_id] = []
-        }
-        questionInfoByUserid[user_id].push(info)
-    })
-    for (let key in questionInfoByUserid) {
-        await updateUserInfo(questionInfoByUserid[key], key)
-    }
-}
 
-async function updateUserInfo(questionInfoByUserid, user_id) {
-    const selectAccount = await selectFromSql('question_model', {
-        "user_id": `= "${user_id}"`
-    });
-    let isAdd = true;
-    if (selectAccount && selectAccount[0]) {
-        isAdd = false
-    }
-    // console.log(selectAccount[0].detail)
-    let detail = selectAccount && selectAccount[0] ? JSON.parse(selectAccount[0].detail) : {}
-    questionInfoByUserid.forEach(res => {
-        const { bankname, qname, user_id } = res
-        if (!detail[bankname]) {
-            detail[bankname] = {}
-        }
-        if (!detail[bankname][qname]) {
-            detail[bankname][qname] = {
-                user_id,
-                bankname,
-                qname: parseInt(qname, 10),
-                record: '',
-                right: 0,
-                wrong: 0,
-                weighted: 0,
-                lastDateTime: parseInt(new Date().getTime(), 10),
-                firstDateTime: parseInt(new Date().getTime(), 10),
-            }
-        }
-    })
-    questionInfoByUserid.forEach(singleInfo => {
-        let { bankname, qname, type, lastDateTime, firstDateTime, record } = singleInfo
-        qname = Number(qname)
-        lastDateTime = Number(lastDateTime)
-        firstDateTime = Number(firstDateTime)
-        record = record ? JSON.parse(record) : record
-        
-        let thisQname = detail[bankname][qname]
-        if (type === "right") {
-            thisQname['right'] = thisQname['right'] + 1;
-        } else if (type === "wrong") {
-            thisQname['wrong'] = thisQname['wrong'] + 1;
-        }
-        thisQname.lastDateTime = lastDateTime || thisQname.lastDateTime
-        thisQname.firstDateTime = firstDateTime || thisQname.firstDateTime
-        thisQname.record = record || thisQname.record
-    })
-
-    if (!isAdd) {
-        await updateToSql('question_model', {
-            detail: JSON.stringify(detail)
-        }, {
-                "user_id": `= "${user_id}"`
+    for (info of copyGlobalData) {
+        const { user_id, paper_id, question_id, record,
+            question_number, right, wrong, weighted,
+            lastDateTime, firstDateTime } = info
+        const primary_key = `${user_id}_${question_id}`
+        let row = await selectFromSql('question_model', {
+            primary_key: ` = "${primary_key}"`
+        })
+        if (row.length === 0) {
+            //更新
+            await insertToSql('question_model', {
+                ...info,
+                primary_key
             })
-    } else {
-        await insertToSql('question_model', {
-            user_id,
-            detail: JSON.stringify(detail)
+        } else {
+            let oldInfo = row[0],
+                updateInfo = {};
+            updateInfo.wrong = oldInfo.wrong + info.wrong
+            updateInfo.weighted = oldInfo.weighted + info.weighted
+            updateInfo.right = oldInfo.right + info.right
+            updateInfo.lastDateTime = info.lastDateTime
+            updateInfo.record = info.record
+        }
+        await updateToSql('question_model', updateInfo, {
+            primary_key: ` = "${primary_key}"`
         })
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//刷题信息备用
-// static async getUserQuestionInfo(ctx, next) {
-//     const { user_id, bankname, dateTime, isDataDefault, isBankDefault } = ctx.query
-//     /*
-//     *用户刷题情况包含
-//     *最近几日刷题情况
-//     *已购买试卷刷题情况
-//     */
-//     if (!user_id) {
-//         ctx.response.body = {
-//             type: 'false',
-//             data: '请添加用户id'
-//         }
-//         return;
-//     }
-//     let bankModel = await getOldBankModel({ user_id, bankname })
-//     let dataModel = await getOldDataModel({ user_id, dateTime })
-//     if (dataModel.error || bankModel.error) {
-//         addLog(dataModel.source)
-//         addLog(bankModel.source)
-//         return {}
-//     }
-
-//     if (bankname || isBankDefault) {
-//         ctx.response.body = {
-//             type: true,
-//             data: { bankModel }
-//         }
-//         return;
-//     } else if (dateTime || isDataDefault) {
-//         ctx.response.body = {
-//             type: true,
-//             data: { dataModel }
-//         }
-//         return
-//     } else {
-//         ctx.response.body = {
-//             type: true,
-//             data: {
-//                 dataModel,
-//                 bankModel
-//             }
-//         }
-//     }
-// }
-
-//存储信息备用
-// async function updateUserQuestionInfo() {
-//     //globalData:Array[]
-//     let copyGlobalData = [].concat(temporaryQuesInfo);
-//     temporaryQuesInfo.length = 0;
-//     let { dataModel, dataBank } = dealWithData(copyGlobalData)
-//     // console.log(dataModel, dataBank)
-//     // addLog(`更新刷题信息，时间为${moment().format('YYYY-MM-DD HH:mm:ss')}`)
-//     //更新用户刷题情况
-//     //需要同时更新日期模型和题库模型
-//     dataModel.forEach(result => {
-//         updateDataModel(result)
-//     })
-
-//     dataBank.forEach(result => {
-//         updateBankModel(result)
-//     })
-// }
+//整理用户答题信息
+function setUserQuestionInfo(modelArray) {
+    if (!Array.isArray(modelArray) || modelArray.length === 0) {
+        return {}
+    }
+    let questionInfo = {}
+    modelArray.forEach(info => {
+        const { paper_id, question_number, wrong, right,
+            weighted, lastDateTime, firstDateTime,
+            record } = info
+        questionInfo[paper_id] = questionInfo[paper_id] || {}
+        let paperIdInfo = questionInfo[paper_id]
+        paperIdInfo[question_number] = {
+            wrong,
+            right,
+            weighted,
+            lastDateTime,
+            firstDateTime,
+            record,
+            paper_id
+        }
+    })
+    return questionInfo
+}

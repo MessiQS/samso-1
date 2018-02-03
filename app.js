@@ -118,11 +118,11 @@ router
     //apply Pay
     .post('/api/applePay',applePay)
 
-function intervalUpdateUserQuestionInfo() {
-    updateUserQuestionInfo();
-    setTimeout(intervalUpdateUserQuestionInfo, 1000 * 2 * 60)
-}
-intervalUpdateUserQuestionInfo();
+// function intervalUpdateUserQuestionInfo() {
+//     updateUserQuestionInfo();
+//     setTimeout(intervalUpdateUserQuestionInfo, 1000 * 2 * 60)
+// }
+// intervalUpdateUserQuestionInfo();
 app.listen(port);
 
 console.log('app started at port ' + port + '...');
