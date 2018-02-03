@@ -175,7 +175,6 @@ async function updateUserQuestionInfo() {
         let row = await selectFromSql('question_model', {
             primary_key: ` = "${primary_key}"`
         })
-        console.log(info)
         if (row.length === 0) {
             //更新
             await insertToSql('question_model', {
@@ -204,20 +203,10 @@ function setUserQuestionInfo(modelArray) {
     }
     let questionInfo = {}
     modelArray.forEach(info => {
-        const { paper_id, question_number, wrong, right,
-            weighted, lastDateTime, firstDateTime,
-            record } = info
+        const { paper_id } = info
         questionInfo[paper_id] = questionInfo[paper_id] || {}
         let paperIdInfo = questionInfo[paper_id]
-        paperIdInfo[question_number] = {
-            wrong,
-            right,
-            weighted,
-            lastDateTime,
-            firstDateTime,
-            record,
-            paper_id
-        }
+        paperIdInfo[question_number] = info
     })
     return questionInfo
 }
