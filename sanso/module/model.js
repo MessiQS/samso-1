@@ -50,7 +50,7 @@ class QuesrtionModel {
             "user_id": `= "${user_id}"`
         })
         let responseData = setUserQuestionInfo(modelArray)
-
+        console.log(responseData)
         ctx.response.body = {
             type: true,
             data: responseData
@@ -158,10 +158,16 @@ module.exports = QuesrtionModel
 
 async function updateUserQuestionInfo() {
     //globalData:Array[]
+    const NumberArray = ["right", "wrong", "weighted", "lastDateTime", "firstDateTime", "question_number"]
     let copyGlobalData = [].concat(temporaryQuesInfo);
     temporaryQuesInfo.length = 0;
 
     for (info of copyGlobalData) {
+        for (let key in info) {
+            if (NumberArray.indexOf(key) >= 0) {
+                info[key] = Number(info[key])
+            }
+        }
         const { user_id, paper_id, question_id, record,
             question_number, right, wrong, weighted,
             lastDateTime, firstDateTime } = info
@@ -169,6 +175,7 @@ async function updateUserQuestionInfo() {
         let row = await selectFromSql('question_model', {
             primary_key: ` = "${primary_key}"`
         })
+        console.log(info)
         if (row.length === 0) {
             //更新
             await insertToSql('question_model', {
@@ -180,13 +187,14 @@ async function updateUserQuestionInfo() {
                 updateInfo = {};
             updateInfo.wrong = oldInfo.wrong + info.wrong
             updateInfo.weighted = oldInfo.weighted + info.weighted
-            updateInfo.right = oldInfo.right + info.right
+            updateInfo.correct = oldInfo.correct + info.correct
             updateInfo.lastDateTime = info.lastDateTime
             updateInfo.record = info.record
+            await updateToSql('question_model', updateInfo, {
+                primary_key: ` = "${primary_key}"`
+            })
+
         }
-        await updateToSql('question_model', updateInfo, {
-            primary_key: ` = "${primary_key}"`
-        })
     }
 }
 //整理用户答题信息
