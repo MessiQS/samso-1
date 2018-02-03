@@ -203,7 +203,7 @@ function setUserQuestionInfo(modelArray) {
     }
     let questionInfo = {}
     modelArray.forEach(info => {
-        const { paper_id } = info
+        const { paper_id, question_number } = info
         questionInfo[paper_id] = questionInfo[paper_id] || {}
         let paperIdInfo = questionInfo[paper_id]
         paperIdInfo[question_number] = info

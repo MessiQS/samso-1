@@ -121,9 +121,9 @@ async function getOnePaperInfo(paperId) {
 			"id": ` = "${paperId}"`
 		})
 		if (paperInfo && paperInfo[0]) {
-			return paperInfo[0]
+			return paperInfo
 		} else {
-			return {}
+			return []
 		}
 	} catch (e) {
 		return {}
