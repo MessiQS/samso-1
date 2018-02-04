@@ -136,12 +136,30 @@ class CustomerService {
     }
 
     static async getUpdate(ctx, next) {
-        // const { version } = ctx.query
+        const { version } = ctx.query
         const res = AboutVersion.getLastVersion()
-        ctx.response.body = {
-            type: true,
-            data: res
+        try {
+            let oldVerson = parseInt(version.split('.').join(''), 10)
+            const newVersion = parseInt(res.version.split('.').join(''), 10)
+            if (oldVerson < newVersion) {
+                ctx.response.body = {
+                    type: true,
+                    data: res
+                }
+            } else {
+                ctx.response.body = {
+                    type: false,
+                    data: '已经是最新版本！'
+                }
+            }
+
+        } catch (e) {
+            ctx.response.body = {
+                type: false,
+                data: '更新信息错误，请在软件商场更新！'
+            }
         }
+
     }
 
     static async getNewVersion(ctx, next) {
