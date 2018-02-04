@@ -19,7 +19,16 @@ const privateUrl = path.resolve(__dirname, "../../bin/private_key.pem")
 pingpp.setPrivateKeyPath(privateUrl);
 class Pingpay {
     static async createCharge(ctx, next) {
-        const { client_ip, amount, channel, subject, body } = ctx.request.body;
+        const { client_ip, amount, channel, subject, body, paper_id } = ctx.request.body;
+        const paperrRow = await selectFromSql('papers', {
+            id: ` = "${paper_id}"`
+        })
+        //服务端控制价格
+        let price = 600;
+        if (paperrRow && paperrRow[0]) {
+            price = parseInt(paperrRow[0].price, 10) * 100
+        }
+        
         // ctx.request.body;
         /*
         *   charge参数说明
@@ -37,7 +46,7 @@ class Pingpay {
                 order_no: getOrderNo(),
                 app: { id: pingpp_app_id },
                 channel: channel,
-                amount: amount,
+                amount: price,
                 client_ip: client_ip,
                 currency: "cny",
                 subject: subject,
@@ -70,11 +79,11 @@ class Pingpay {
 
 
         if (type === "charge.succeeded") {
-            const { object:{body} } = data
+            const { object: { body } } = data
             const keyArr = body.split('_BUY_')
             const user_id = keyArr[0]
-            const bankname =keyArr[1]
-            console.log(keyArr,body)
+            const bankname = keyArr[1]
+            console.log(keyArr, body)
 
             const selectAccount = await selectFromSql('user', {
                 "user_id": `= "${user_id}"`
@@ -110,15 +119,15 @@ class Pingpay {
         }
 
     }
-    static async applePay(ctx, next){
+    static async applePay(ctx, next) {
         const body = ctx.request.body;
         // console.log(body)
-        
+
         const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
         var options = {
             method: 'post',
             uri,
-            body:body.receipt,
+            body: body.receipt,
             headers: {
                 'User-Agent': 'Request-Promise'
             },
@@ -127,8 +136,8 @@ class Pingpay {
         const response = await rp(options)
         // console.log(response)
         ctx.response.body = {
-            type:true,
-            data:response
+            type: true,
+            data: response
         }
     }
 }
