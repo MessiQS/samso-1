@@ -107,7 +107,7 @@ router
     //获取用户刷题情况
     .get('/api/getUserQuestionInfo', getUserQuestionInfo)
     //获取用户单套题刷题情况
-    .get('api/getQuestionInfoByPaperid', getQuestionInfoByPaperid)
+    .get('/api/getQuestionInfoByPaperid', getQuestionInfoByPaperid)
     //用户反馈信息
     .post('/api/feedback', feedback)
     //错题反馈
