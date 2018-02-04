@@ -51,18 +51,18 @@ class QuesrtionModel {
             "order by": "lastDateTime desc"
         })
         let responseData = setUserQuestionInfo(modelArray)
-        let lastPaoperInfo = {}
+        let lastPaperInfo = {}
         if (Object.keys(responseData).length > 0) {
             const { paper_id } = modelArray[0]
             const papers = await selectFromSql('papers', {
                 id: ` = "${paper_id}"`
             })
-            lastPaoperInfo = papers[0] || {}
+            lastPaperInfo = papers[0] || {}
         }
         ctx.response.body = {
             type: true,
             data: {
-                lastPaoperInfo,
+                lastPaperInfo,
                 userQuestionInfo: responseData
             }
         }
