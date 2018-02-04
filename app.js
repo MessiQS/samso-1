@@ -31,7 +31,8 @@ const {
     getUserBuyInfo,
     updateUserQuestionInfo,
     getUpdateInfoCache,
-    getUserQuestionInfo
+    getUserQuestionInfo,
+    getQuestionInfoByPaperid
 } = require('./sanso/module/model')
 
 //支付
@@ -105,18 +106,20 @@ router
     .post('/api/getUpdateInfoCache', getUpdateInfoCache)
     //获取用户刷题情况
     .get('/api/getUserQuestionInfo', getUserQuestionInfo)
+    //获取用户单套题刷题情况
+    .get('api/getQuestionInfoByPaperid', getQuestionInfoByPaperid)
     //用户反馈信息
     .post('/api/feedback', feedback)
     //错题反馈
-    .post('/api/wrongFeedBack',wrongFeedBack)
+    .post('/api/wrongFeedBack', wrongFeedBack)
     //获取更新信息
-    .get('/api/getUpdate',getUpdate)
+    .get('/api/getUpdate', getUpdate)
     //下载新版本
-    .get('/api/getNewVersion',getNewVersion)
+    .get('/api/getNewVersion', getNewVersion)
     //ping++ hook
     .post('/api/pingHook', pingHook)
     //apply Pay
-    .post('/api/applePay',applePay)
+    .post('/api/applePay', applePay)
 
 // function intervalUpdateUserQuestionInfo() {
 //     updateUserQuestionInfo();

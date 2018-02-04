@@ -68,6 +68,37 @@ class QuesrtionModel {
         }
     }
 
+    static async getQuestionInfoByPaperid(ctx, next) {
+        const { user_id, paper_id } = ctx.query
+        //paper_id
+        if (!user_id || !paper_id) {
+            ctx.response.body = {
+                type: false,
+                data: '请添加用户id和试卷id'
+            }
+            return;
+        }
+
+        const isValid = await Check.checkHeader(ctx.request, user_id)
+        if (!isValid) {
+            ctx.response.body = {
+                type: false,
+                data: '登录错误，请重新登录'
+            }
+            return;
+        };
+
+        let modelArray = await selectFromSql('question_model', {
+            "user_id": `= "${user_id}" and`,
+            "paper_id": `= "${paper_id}"`
+        })
+        let responseData = setUserQuestionInfo(modelArray)
+        ctx.response.body = {
+            type: true,
+            data: responseData
+        }
+
+    }
     static async getUpdateInfoCache(ctx, next) {
         const data = ctx.request.body;
         const { user_id } = data
