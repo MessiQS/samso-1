@@ -47,13 +47,24 @@ class QuesrtionModel {
         };
 
         let modelArray = await selectFromSql('question_model', {
-            "user_id": `= "${user_id}"`
+            "user_id": `= "${user_id}"`,
+            "order by": "lastDateTime desc"
         })
         let responseData = setUserQuestionInfo(modelArray)
-        console.log(responseData)
+        let lastPaoperInfo = {}
+        if (Object.keys(responseData).length > 0) {
+            const { paper_id } = modelArray[0]
+            const papers = await selectFromSql('papers', {
+                id: ` = "${paper_id}"`
+            })
+            lastPaoperInfo = papers[0] || {}
+        }
         ctx.response.body = {
             type: true,
-            data: responseData
+            data: {
+                lastPaoperInfo,
+                userQuestionInfo: responseData
+            }
         }
     }
 
@@ -177,10 +188,8 @@ async function updateUserQuestionInfo() {
         })
         if (row.length === 0) {
             //更新
-            await insertToSql('question_model', {
-                ...info,
-                primary_key
-            })
+            info.primary_key = primary_key
+            await insertToSql('question_model', info)
         } else {
             let oldInfo = row[0],
                 updateInfo = {};
