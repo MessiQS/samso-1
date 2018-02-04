@@ -56,7 +56,7 @@ class sqlFormat extends groupFunctionArray {
             for (let key in condition) {
                 condi = condi + ' ' + key + ' ' + condition[key];
             };
-        }else{
+        } else {
             condi = ''
         }
 
@@ -130,10 +130,10 @@ class sqlFormat extends groupFunctionArray {
             dateArray = Object.keys(data);
         dateArray.forEach((value, index) => {
             if (index === dateArray.length - 1) {
-                let jianrongValue = data[value].replace(/"/g, '\"').replace(/'/g, "\'\'");
+                let jianrongValue = data[value].replace ? data[value].replace(/"/g, '\"').replace(/'/g, "\'\'") : data[value];
                 dataValue = `${dataValue}${value}='${jianrongValue}'`
             } else {
-                let jianrongValue = data[value].replace(/"/g, '\"').replace(/'/g, "\'\'");
+                let jianrongValue = data[value].replace ? data[value].replace(/"/g, '\"').replace(/'/g, "\'\'") : data[value];
                 dataValue = `${dataValue}${value}='${jianrongValue}',`
             }
         })
