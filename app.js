@@ -64,7 +64,7 @@ const app = new Koa();
 app.use(bodyParser());
 // add router middleware:
 app.use(router.routes());
-app.use(serve(__dirname + '/static'));
+app.use(serve(__dirname + '/static'),{ extensions: ['html'] });
 
 router
     .get('/', async (ctx, next) => {
