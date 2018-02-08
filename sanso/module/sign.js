@@ -27,38 +27,39 @@ class Sign {
 				'type': false,
 				'data': '账号不存在'
 			};
-		} else {
-			if (row[0]['password'] !== password) {
-				ctx.response.body = {
-					'type': false,
-					'data': '您输入的密码不正确'
-				};
-			} else {
-				let uid = getUid();
-				let updatesql = await updateToSql('user', {
-					token: uid
-				}, {
-						"account": ` = "${account} "`
-					});
-				if (updatesql) {
-					let userInfo,
-						user_id = row[0].user_id;
-					userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
-					ctx.response.body = {
-						'type': true,
-						'data': {
-							'token': uid,
-							user_id,
-							userInfo
-						}
-					};
-				} else {
-					ctx.response.body = {
-						'type': false,
-						'data': '登录失败请重试'
-					};
+			return
+		}
+		if (row[0]['password'] !== password) {
+			ctx.response.body = {
+				'type': false,
+				'data': '您输入的密码不正确'
+			};
+			return
+		}
+		let uid = getUid();
+		let updatesql = await updateToSql('user', {
+			token: uid
+		}, {
+				"account": ` = "${account} "`
+			});
+		if (updatesql) {
+			let userInfo,
+				user_id = row[0].user_id;
+				console.log(10)
+			userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
+			ctx.response.body = {
+				'type': true,
+				'data': {
+					'token': uid,
+					user_id,
+					userInfo
 				}
-			}
+			};
+		} else {
+			ctx.response.body = {
+				'type': false,
+				'data': '登录失败请重试'
+			};
 		}
 	};
 	static async freeRegistration(ctx, next) {
@@ -250,6 +251,7 @@ class Sign {
 		if (selectAccount[0].token === accountToken) {
 			let userInfo;
 			if (selectAccount[0].data_info) {
+				console.log(11)
 				userInfo = JSON.parse(selectAccount[0].data_info);
 			}
 			ctx.response.body = {
@@ -333,7 +335,6 @@ async function setNewUserId() {
 		useridArr = (zero.repeat(8) + length).split('');
 	while (useridArr.length > 8) {
 		useridArr.shift()
-		console.log(useridArr)
 	}
 	return `SS${useridArr.join('')}`
 }

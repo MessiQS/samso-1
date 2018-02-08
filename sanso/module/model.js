@@ -17,7 +17,7 @@ const addLog = require('../serverLog').addLog;
 
 const Check = require('../service/check')
 
-const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
+// const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
 
 class QuesrtionModel {
     //获取用户刷题情况
@@ -141,6 +141,7 @@ class QuesrtionModel {
         });
         try {
             let { data_info } = selectAccount[0]
+            console.log(7)
             data_info = data_info ? JSON.parse(data_info) : {}
             ctx.response.body = {
                 "type": true,
@@ -165,7 +166,8 @@ class QuesrtionModel {
         });
         let { data_info } = selectAccount[0]
 
-
+        console.log(8)
+        
         data_info = data_info ? JSON.parse(data_info) : {}
 
         data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []

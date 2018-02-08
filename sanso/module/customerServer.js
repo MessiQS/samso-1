@@ -23,17 +23,20 @@ const {
 class AboutVersion {
     static getAllVersion() {
         const version = fs.readFileSync(versionPath)
+        console.log(1)
         return JSON.parse(version)
     }
 
     static getLastVersion() {
         const version = fs.readFileSync(versionPath)
+        console.log(2)
         const versionArray = JSON.parse(version)
         const last = versionArray.length ? versionArray.length - 1 : 0;
         return versionArray[last]
     }
     static updateAppVersion(info) {
         const version = fs.readFileSync(versionPath)
+        console.log(3)
         const versionArray = JSON.parse(version)
         versionArray.push(info)
         fs.writeFileSync(versionPath, JSON.stringify(versionArray))
@@ -102,6 +105,7 @@ class CustomerService {
                 id: ` = "${id}"`
             })
             if (rows.length > 0) {
+                console.log(4)
                 let user_id_array = JSON.parse(rows[0].user_id_array)
                 if (user_id_array.indexOf(id) < 0) {
                     user_id_array.push(user_id)

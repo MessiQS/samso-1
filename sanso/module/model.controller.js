@@ -170,6 +170,7 @@ async function getOldDataModel({ user_id, dateTime }) {
         let cell;
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
+                console.log(5)
                 res.detail = res.detail ? JSON.parse(res.detail) : null
             });
             switch (type) {
@@ -235,6 +236,7 @@ async function getOldBankModel({ user_id, bankname }) {
         const response = await selectFromSql('bankmodel', params);
         if (Array.isArray(response) && response.length > 0) {
             response.forEach(res => {
+                console.log(6)
                 res.detail = res.detail ? JSON.parse(res.detail) : null
             });
             return {

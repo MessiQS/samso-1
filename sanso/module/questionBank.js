@@ -237,6 +237,7 @@ async function checkBuy({ user_id, paperId }) {
 		user_id: ` = "${user_id}"`
 	})
 	let user = userRows[0];
+	console.log(9)
 	let dataInfo = user['data_info'] ? JSON.parse(user['data_info']) : {}
 	let { buyedInfo } = dataInfo
 	buyedInfo = buyedInfo || []

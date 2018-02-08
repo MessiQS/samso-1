@@ -89,6 +89,7 @@ class Pingpay {
                 "user_id": `= "${user_id}"`
             });
             let { data_info } = selectAccount[0]
+            console.log(12)
             data_info = data_info ? JSON.parse(data_info) : {}
 
             data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
