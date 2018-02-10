@@ -122,59 +122,55 @@ class Pingpay {
     static async applePay(ctx, next) {
         let body = ctx.request.body;
         const { user_id, paper_id, receipt } = body
-        if(!user_id || !paper_id || !receipt ){
-        ctx.response.body = {
-                    "type": false,
-                    "data":'缺少参数' ,
-                };
-                return false
+        if (!user_id || !paper_id || !receipt) {
+            ctx.response.body = {
+                "type": false,
+                "data": '缺少参数',
+            };
+            return false
         }
-        // const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
+        const sandUri = "https://sandbox.itunes.apple.com/verifyReceipt"
         const uri = "https://buy.itunes.apple.com/verifyReceipt"
 
-        var options = {
-            method: 'post',
-            uri,
-            body: {
-                "receipt-data": receipt
-            },
-            headers: {
-                'User-Agent': 'Request-Promise'
-            },
-            json: true
-        };
+        var options = getOption(uri, receipt)
         const response = await rp(options)
-        console.log(response.status)
         if (response && response.status === 0) {
-            const selectAccount = await selectFromSql('user', {
-                "user_id": `= "${user_id}"`
-            });
-            let { data_info } = selectAccount[0]
-            data_info = data_info ? JSON.parse(data_info) : {}
-
-            data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
-
-            if (data_info.buyedInfo.indexOf(paper_id) < 0) {
-                data_info.buyedInfo.push(paper_id)
-            }
-            try {
-                await updateToSql('user', {
-                    data_info: JSON.stringify(data_info)
-                }, {
-                        "user_id": ` = "${user_id}"`,
-                    })
+            const updatInfo = await updateBuyInfo(user_id, paper_id)
+            if (updatInfo) {
                 ctx.response.body = {
                     type: true,
                     data: response.receipt
                 }
-                return true;
-            } catch (err) {
+            } else {
                 ctx.response.body = {
                     "type": false,
                     "data": '付款成功但是更新购买信息失败',
                 };
-                return false;
             }
+            return false;
+        } else if (response && response.status === 21007) {
+            const sandOption = getOption(sandUri, receipt)
+            const sandRenspose = await rp(sandOption)
+            if (sandRenspose && sandRenspose.status === 0) {
+                const updatInfo = await updateBuyInfo(user_id, paper_id)
+                if (updatInfo) {
+                    ctx.response.body = {
+                        type: true,
+                        data: response.receipt
+                    }
+                } else {
+                    ctx.response.body = {
+                        "type": false,
+                        "data": '沙盒环境购买成功，刷新购买信息失败',
+                    };
+                }
+            }else{
+                ctx.response.body = {
+                    "type": false,
+                    "data": '正式环境不行，沙盒环境也不行',
+                };  
+            }
+            return
         }
         ctx.response.body = {
             type: false,
@@ -190,4 +186,45 @@ function getOrderNo() {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
     return moment().format('YYYYMMDDHHmmss') + S4();
+}
+
+function updateBuyInfo(user_id, paper_id) {
+    return new Promise((resolve, reject) => {
+        try {
+            const selectAccount = await selectFromSql('user', {
+                "user_id": `= "${user_id}"`
+            });
+            let { data_info } = selectAccount[0]
+            data_info = data_info ? JSON.parse(data_info) : {}
+
+            data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
+
+            if (data_info.buyedInfo.indexOf(paper_id) < 0) {
+                data_info.buyedInfo.push(paper_id)
+            }
+            await updateToSql('user', {
+                data_info: JSON.stringify(data_info)
+            }, {
+                    "user_id": ` = "${user_id}"`,
+                })
+            resolve(true)
+        } catch (e) {
+            console.log(e)
+            resolve(false)
+        }
+    })
+}
+
+function getOption(uri, receipt) {
+    return {
+        method: 'post',
+        uri,
+        body: {
+            "receipt-data": receipt
+        },
+        headers: {
+            'User-Agent': 'Request-Promise'
+        },
+        json: true
+    };
 }
