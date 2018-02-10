@@ -164,11 +164,11 @@ class Pingpay {
                         "data": '沙盒环境购买成功，刷新购买信息失败',
                     };
                 }
-            }else{
+            } else {
                 ctx.response.body = {
                     "type": false,
                     "data": '正式环境不行，沙盒环境也不行',
-                };  
+                };
             }
             return
         }
@@ -188,31 +188,29 @@ function getOrderNo() {
     return moment().format('YYYYMMDDHHmmss') + S4();
 }
 
-function updateBuyInfo(user_id, paper_id) {
-    return new Promise((resolve, reject) => {
-        try {
-            const selectAccount = await selectFromSql('user', {
-                "user_id": `= "${user_id}"`
-            });
-            let { data_info } = selectAccount[0]
-            data_info = data_info ? JSON.parse(data_info) : {}
+async function updateBuyInfo(user_id, paper_id) {
+    try {
+        const selectAccount = await selectFromSql('user', {
+            "user_id": `= "${user_id}"`
+        });
+        let { data_info } = selectAccount[0]
+        data_info = data_info ? JSON.parse(data_info) : {}
 
-            data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
+        data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
 
-            if (data_info.buyedInfo.indexOf(paper_id) < 0) {
-                data_info.buyedInfo.push(paper_id)
-            }
-            await updateToSql('user', {
-                data_info: JSON.stringify(data_info)
-            }, {
-                    "user_id": ` = "${user_id}"`,
-                })
-            resolve(true)
-        } catch (e) {
-            console.log(e)
-            resolve(false)
+        if (data_info.buyedInfo.indexOf(paper_id) < 0) {
+            data_info.buyedInfo.push(paper_id)
         }
-    })
+        await updateToSql('user', {
+            data_info: JSON.stringify(data_info)
+        }, {
+                "user_id": ` = "${user_id}"`,
+            })
+        return true
+    } catch (e) {
+        console.log(e)
+        return false
+    }
 }
 
 function getOption(uri, receipt) {
