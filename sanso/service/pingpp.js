@@ -122,7 +122,16 @@ class Pingpay {
     static async applePay(ctx, next) {
         let body = ctx.request.body;
         const { user_id, paper_id, receipt } = body
-        const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
+        if(!user_id || !paper_id || !receipt ){
+        ctx.response.body = {
+                    "type": false,
+                    "data":'缺少参数' ,
+                };
+                return false
+        }
+        // const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
+        const uri = "https://buy.itunes.apple.com/verifyReceipt"
+
         var options = {
             method: 'post',
             uri,
