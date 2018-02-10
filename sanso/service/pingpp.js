@@ -28,7 +28,7 @@ class Pingpay {
         if (paperrRow && paperrRow[0]) {
             price = parseInt(paperrRow[0].price, 10) * 100
         }
-        
+
         // ctx.request.body;
         /*
         *   charge参数说明
@@ -121,13 +121,13 @@ class Pingpay {
     }
     static async applePay(ctx, next) {
         let body = ctx.request.body;
-        const {user_id,paper_id,receipt} = body
+        const { user_id, paper_id, receipt } = body
         const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
         var options = {
             method: 'post',
             uri,
             body: {
-                "receipt-data":receipt
+                "receipt-data": receipt
             },
             headers: {
                 'User-Agent': 'Request-Promise'
@@ -135,10 +135,9 @@ class Pingpay {
             json: true
         };
         const response = await rp(options)
-        // if(response && response.type === 1){
-            console.log(response.status)
-            if(response && response.status === 0){
-                            const selectAccount = await selectFromSql('user', {
+        console.log(response.status)
+        if (response && response.status === 0) {
+            const selectAccount = await selectFromSql('user', {
                 "user_id": `= "${user_id}"`
             });
             let { data_info } = selectAccount[0]
@@ -146,28 +145,32 @@ class Pingpay {
 
             data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
 
-            if (data_info.buyedInfo.indexOf(bankname) < 0) {
-                data_info.buyedInfo.push(bankname)
+            if (data_info.buyedInfo.indexOf(paper_id) < 0) {
+                data_info.buyedInfo.push(paper_id)
             }
+            try {
+                await updateToSql('user', {
+                    data_info: JSON.stringify(data_info)
+                }, {
+                        "user_id": ` = "${user_id}"`,
+                    })
                 ctx.response.body = {
                     type: true,
                     data: response.receipt
                 }
-                return
+                return true;
+            } catch (err) {
+                ctx.response.body = {
+                    "type": false,
+                    "data": '付款成功但是更新购买信息失败',
+                };
+                return false;
             }
-            ctx.response.body = {
-                type: false,
-                data: response
-            }
-            // return 
-        // }
-        // console.log(response)
-        // ctx.response.body = {
-        //     type: false,
-        //     data: response
-        // }
-
-        // console.log(response)
+        }
+        ctx.response.body = {
+            type: false,
+            data: response
+        }
     }
 }
 module.exports = Pingpay;
