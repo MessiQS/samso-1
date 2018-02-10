@@ -141,7 +141,7 @@ class QuesrtionModel {
         });
         try {
             let { data_info } = selectAccount[0]
-            console.log(7)
+            console.log(7,moment().format('YYYY-MM-DD HH:mm:ss'))
             data_info = data_info ? JSON.parse(data_info) : {}
             ctx.response.body = {
                 "type": true,

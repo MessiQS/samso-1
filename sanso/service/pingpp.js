@@ -89,7 +89,6 @@ class Pingpay {
                 "user_id": `= "${user_id}"`
             });
             let { data_info } = selectAccount[0]
-            console.log(12)
             data_info = data_info ? JSON.parse(data_info) : {}
 
             data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
@@ -121,25 +120,54 @@ class Pingpay {
 
     }
     static async applePay(ctx, next) {
-        const body = ctx.request.body;
-        // console.log(body)
-
+        let body = ctx.request.body;
+        const {user_id,paper_id,receipt} = body
         const uri = "https://sandbox.itunes.apple.com/verifyReceipt"
         var options = {
             method: 'post',
             uri,
-            body: body.receipt,
+            body: {
+                "receipt-data":receipt
+            },
             headers: {
                 'User-Agent': 'Request-Promise'
             },
             json: true
         };
         const response = await rp(options)
+        // if(response && response.type === 1){
+            console.log(response.status)
+            if(response && response.status === 0){
+                            const selectAccount = await selectFromSql('user', {
+                "user_id": `= "${user_id}"`
+            });
+            let { data_info } = selectAccount[0]
+            data_info = data_info ? JSON.parse(data_info) : {}
+
+            data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []
+
+            if (data_info.buyedInfo.indexOf(bankname) < 0) {
+                data_info.buyedInfo.push(bankname)
+            }
+                ctx.response.body = {
+                    type: true,
+                    data: response.receipt
+                }
+                return
+            }
+            ctx.response.body = {
+                type: false,
+                data: response
+            }
+            // return 
+        // }
         // console.log(response)
-        ctx.response.body = {
-            type: true,
-            data: response
-        }
+        // ctx.response.body = {
+        //     type: false,
+        //     data: response
+        // }
+
+        // console.log(response)
     }
 }
 module.exports = Pingpay;
