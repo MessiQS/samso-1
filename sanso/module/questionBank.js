@@ -89,7 +89,7 @@ class QuestionBank {
 		//获取试卷对象
 		const paperNameArray = await provinceCache();
 		const typeObject = await transObjToProvice(paperNameArray);
-		if (system === 'ios' && version === "1.0.2") {
+		if (system === 'IOS' && version === "1.0.2") {
 			let ios_data = {}
 			for(let key in paperNameArray){
 				ios_data[key] = {
