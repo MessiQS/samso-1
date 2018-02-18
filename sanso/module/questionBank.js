@@ -34,7 +34,7 @@ class QuestionBank {
 			}
 			return;
 		}
-		checkBuy({user_id, paperId})
+		checkBuy({ user_id, paperId })
 		const questionArray = await selectFromSql('question_banks', {
 			'FIND_IN_SET': '("' + provinceObjectCache[paperId].title + '",`title`)',
 			'ORDER BY': ` question_number`
@@ -77,7 +77,7 @@ class QuestionBank {
 
 	//获取试卷详情
 	static async getPaperType(ctx, next) {
-		const { user_id } = ctx.query;
+		const { user_id, version, system } = ctx.query;
 		const isValid = await checkHeader(ctx.request, user_id);
 		if (!isValid) {
 			ctx.response.body = {
@@ -89,6 +89,21 @@ class QuestionBank {
 		//获取试卷对象
 		const paperNameArray = await provinceCache();
 		const typeObject = await transObjToProvice(paperNameArray);
+		if (system === 'ios' && version === "1.0.2") {
+			let ios_data = {}
+			for(let key in paperNameArray){
+				ios_data[key] = {
+					...paperNameArray[key],
+					price:"0.00"
+				}
+			}
+			let ios_typeObject = await transObjToProvice(ios_data)
+			ctx.response.body = {
+				type: true,
+				data: ios_typeObject
+			}
+			return;
+		}
 		ctx.response.body = {
 			type: true,
 			data: typeObject
@@ -246,7 +261,7 @@ async function checkBuy({ user_id, paperId }) {
 		price: ` = "0.00"`
 	})
 	freeIdArray = freeRows.map(row => row.id)
-	
+
 	if (buyedInfo.indexOf(paperId) < 0 && freeIdArray.indexOf(paperId) < 0) {
 		sendMail('kefu@shuatiapp.cn', `用户 ${user_id} 夸权限购买`, `购买内容为 paperId = ${paperId},他已经购买的项目有${buyedInfo.join()}`)
 	}
