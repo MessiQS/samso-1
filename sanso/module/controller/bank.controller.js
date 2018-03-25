@@ -98,7 +98,7 @@ function transObjToDriver(paperNameArray) {
         data: []
     },]
     for (let key in paperNameArray) {
-        const result = paperNameArray[key],
+        const result = paperNameArray[key]
         const { province } = result
         const index = titleArr.indexOf(province)
         typeObject[index].data.push(result)
