@@ -23,15 +23,29 @@ async function provinceCache() {
 	// 	return paperObj
 	// }else{
 	let paperObj = {}
-	const paperSqlInfo = await selectFromSql('papers');
+	const paperSqlInfo = await selectFromSql('papers', {
+		"type": ` = "servant"`
+	});
 	paperSqlInfo.forEach(result => {
 		paperObj[result.id] = result
 	})
 	return paperObj
 	// }
 }
+async function getPaperMenuByType(type) {
+	let paperObj = {}
+	const paperSqlInfo = await selectFromSql('papers', {
+		"type": ` = "${type}"`
+
+	});
+	paperSqlInfo.forEach(result => {
+		paperObj[result.id] = result
+	})
+	return paperObj
+}
 module.exports = {
 	codeObj: code,
 	provinceCache,//缓存城市
 	temporaryQuesInfo,
+	getPaperMenuByType
 }

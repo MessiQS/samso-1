@@ -64,7 +64,7 @@ const app = new Koa();
 app.use(bodyParser());
 // add router middleware:
 app.use(router.routes());
-app.use(serve(__dirname + '/static'),{ extensions: ['html'] });
+app.use(serve(__dirname + '/static'), { extensions: ['html'] });
 
 router
     .get('/', async (ctx, next) => {
@@ -96,6 +96,7 @@ router
     //获取试卷
     .get('/api/getpaper', getPaper)
     .get('/api/papertype', getPaperType)
+    .get('/api/getPaperTypeByType', getPaperTypeByType)
     //获取单套时间
     .get('/api/getSinglePaperInfo', getSinglePaperInfo)
     //购买信息更新

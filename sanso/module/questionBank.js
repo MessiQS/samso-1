@@ -10,7 +10,8 @@ const {
 	updateToSql
 } = new sqlFormat();
 const { checkHeader } = require('../service/check');
-const { provinceCache } = require('./global');
+const { transObjToProvice, transObjToDriver } = require('./controller/bank.controller')
+const { provinceCache, getPaperMenuByType } = require('./global');
 const sendMail = require('../service/mail')
 
 
@@ -89,21 +90,35 @@ class QuestionBank {
 		//获取试卷对象
 		const paperNameArray = await provinceCache();
 		const typeObject = await transObjToProvice(paperNameArray);
-		if (system === 'IOS' && version === "1.0.4") {
-			let ios_data = {}
-			for(let key in paperNameArray){
-				ios_data[key] = {
-					...paperNameArray[key],
-					price:"0.00"
-				}
-			}
-			let ios_typeObject = await transObjToProvice(ios_data)
+		ctx.response.body = {
+			type: true,
+			data: typeObject
+		}
+	}
+
+	//获取试卷详情
+	static async getPaperTypeByType(ctx, next) {
+		const { user_id, version, system, type } = ctx.query;
+		const isValid = await checkHeader(ctx.request, user_id);
+		if (!isValid) {
 			ctx.response.body = {
-				type: true,
-				data: ios_typeObject
+				type: false,
+				data: '登录错误，请重新登录'
+			}
+			return;
+		};
+		if (!type) {
+			ctx.response.body = {
+				type: false,
+				data: '请输入获取试卷的类型'
 			}
 			return;
 		}
+		//获取试卷对象
+		const paperNameArray = await getPaperMenuByType(type);
+
+		const typeObject = await getMenuTree(type, paperNameArray);
+
 		ctx.response.body = {
 			type: true,
 			data: typeObject
@@ -159,94 +174,6 @@ async function getArrayPaperInfo(paperId) {
 
 }
 
-async function transObjToProvice(paperNameArray) {
-	const provinceArray = ['安徽', '北京', '上海', '天津', '重庆', '河北', '山西', '内蒙古',
-		'辽宁', '吉林', '黑龙江', '江苏', '浙江', '福建', '江西', '山东',
-		'河南', '湖北', '湖南', '广东', '广西', '海南', '四川', '贵州',
-		'云南', '西藏', '陕西', '甘肃', '宁夏', '青海', '新疆', '香港',
-		'澳门', '台湾', '国家', '北京', '上海', '天津', '重庆'
-	],
-		cityArray = ['北京', '上海', '天津', '重庆', '广州', '深圳'],
-		quArray = ['内蒙古', '宁夏', '西藏', '新疆'];
-	let typeObject = [];
-
-	for (let key in paperNameArray) {
-		let result = paperNameArray[key],
-			typeName,
-			province;
-		const { title } = result;
-		if (title.indexOf('国家') >= 0) {
-			typeName = '国考';
-			province = "国家"
-		} else if (isCity(title, quArray).type) {
-			let index = isCity(title, quArray).idx;
-			typeName = quArray[index] + '区考';
-			province = quArray[index]
-		} else if (isCity(title, cityArray).type) {
-			let index = isCity(title, cityArray).idx;
-			typeName = cityArray[index] + '市考';
-			province = cityArray[index]
-		} else {
-			let idx = checkProvince(title);
-			typeName = provinceArray[idx] + '省考';
-			province = provinceArray[idx]
-		};
-		typeObject = pushInType({
-			typeObject,
-			typeName,
-			result,
-			province,
-		});
-	}
-	return typeObject
-
-	function isCity(key, cityArray) {
-		let index = -1;
-		cityArray.forEach((res, idx) => {
-			if (key.indexOf(res) >= 0) {
-				index = idx;
-			}
-		})
-		if (index >= 0) {
-			return {
-				type: true,
-				idx: index
-			}
-		} else {
-			return {
-				type: false
-			}
-		}
-	}
-
-	function checkProvince(key) {
-		let index = -1;
-		provinceArray.forEach((res, idx) => {
-			if (key.indexOf(res) >= 0) {
-				index = idx;
-			}
-		})
-		return index;
-	}
-
-	function pushInType({ typeObject, typeName, result, province }) {
-		//检测有没有这个区的，如果没有就新建
-		if (!typeObject.some((res) => {
-			if (res.title === typeName) {
-				res.data.push(result)
-			}
-			return res.title === typeName;
-		})) {
-			typeObject.push({
-				title: typeName,
-				province,
-				data: [result]
-			})
-		}
-		return typeObject
-	}
-}
-
 async function checkBuy({ user_id, paperId }) {
 	let userRows = await selectFromSql('user', {
 		user_id: ` = "${user_id}"`
@@ -265,4 +192,20 @@ async function checkBuy({ user_id, paperId }) {
 	if (buyedInfo.indexOf(paperId) < 0 && freeIdArray.indexOf(paperId) < 0) {
 		sendMail('kefu@shuatiapp.cn', `用户 ${user_id} 夸权限购买`, `购买内容为 paperId = ${paperId},他已经购买的项目有${buyedInfo.join()}`)
 	}
+}
+
+async function getMenuTree(type, paperNameArray) {
+	let typeObject
+	switch (type) {
+		case "servant":
+			typeObject = await transObjToProvice(paperNameArray)
+			break;
+		case "driver":
+			typeObject = await transObjToDriver(paperNameArray)
+			break;
+		default:
+			typeObject = await transObjToProvice(paperNameArray)
+			break;
+	}
+	return typeObject
 }
