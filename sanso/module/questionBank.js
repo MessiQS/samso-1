@@ -11,7 +11,7 @@ const {
 } = new sqlFormat();
 const { checkHeader } = require('../service/check');
 const { transObjToProvice, transObjToDriver } = require('./controller/bank.controller')
-const { provinceCache, getPaperMenuByType } = require('./global');
+const { provinceCache, getPaperMenuByType, getAllPaperId } = require('./global');
 const sendMail = require('../service/mail')
 
 
@@ -19,7 +19,7 @@ class QuestionBank {
 	static async getPaper(ctx, next) {
 		const { user_id, paperId } = ctx.query;
 		const isValid = await checkHeader(ctx.request, user_id);
-		const provinceObjectCache = await provinceCache();
+		const provinceObjectCache = await getAllPaperId();
 
 		if (!isValid) {
 			ctx.response.body = {

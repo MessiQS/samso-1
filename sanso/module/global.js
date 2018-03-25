@@ -32,6 +32,16 @@ async function provinceCache() {
 	return paperObj
 	// }
 }
+
+async function getAllPaperId() {
+	let paperObj = {}
+	const paperSqlInfo = await selectFromSql('papers');
+	paperSqlInfo.forEach(result => {
+		paperObj[result.id] = result
+	})
+	return paperObj
+}
+
 async function getPaperMenuByType(type) {
 	let paperObj = {}
 	const paperSqlInfo = await selectFromSql('papers', {
@@ -47,5 +57,6 @@ module.exports = {
 	codeObj: code,
 	provinceCache,//缓存城市
 	temporaryQuesInfo,
-	getPaperMenuByType
+	getPaperMenuByType,
+	getAllPaperId
 }

@@ -24,7 +24,7 @@ const {
     getPaper,
     getSinglePaperInfo,
     getPaperType,
-     getPaperTypeByType
+    getPaperTypeByType
 } = require('./sanso/module/questionBank');
 
 const {
