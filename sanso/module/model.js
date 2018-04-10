@@ -16,7 +16,7 @@ const moment = require('moment')
 const addLog = require('../serverLog').addLog;
 
 const Check = require('../service/check')
-
+const { activeUserArray } = require('./global')
 // const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
 
 class QuesrtionModel {
@@ -45,6 +45,10 @@ class QuesrtionModel {
             }
             return;
         };
+        //记录活跃用户
+        if (activeUserArray.indexOf(user_id) < 0) {
+            activeUserArray.push(user_id)
+        }
 
         let modelArray = await selectFromSql('question_model', {
             "user_id": `= "${user_id}"`,
@@ -141,7 +145,7 @@ class QuesrtionModel {
         });
         try {
             let { data_info } = selectAccount[0]
-            console.log(7,moment().format('YYYY-MM-DD HH:mm:ss'))
+            console.log(7, moment().format('YYYY-MM-DD HH:mm:ss'))
             data_info = data_info ? JSON.parse(data_info) : {}
             ctx.response.body = {
                 "type": true,
@@ -167,7 +171,7 @@ class QuesrtionModel {
         let { data_info } = selectAccount[0]
 
         console.log(8)
-        
+
         data_info = data_info ? JSON.parse(data_info) : {}
 
         data_info.buyedInfo = data_info.buyedInfo ? data_info.buyedInfo : []

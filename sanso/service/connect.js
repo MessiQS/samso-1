@@ -59,8 +59,6 @@ class sqlFormat extends groupFunctionArray {
         } else {
             condi = ''
         }
-
-        console.log(selectSql + condi)
         return super.getSql(selectSql + condi);
     }
     insertToSql(tableName, data) {

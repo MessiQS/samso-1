@@ -53,10 +53,15 @@ async function getPaperMenuByType(type) {
 	})
 	return paperObj
 }
+
+//活跃用户
+let activeUserArray = []
+
 module.exports = {
 	codeObj: code,
 	provinceCache,//缓存城市
 	temporaryQuesInfo,
 	getPaperMenuByType,
-	getAllPaperId
+	getAllPaperId,
+	activeUserArray
 }

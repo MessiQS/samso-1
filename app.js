@@ -60,6 +60,11 @@ const {
     wrongFeedBack,
 } = require('./sanso/module/customerServer')
 
+//数据报告
+const {
+    sendUserToEmail
+} = require('./sanso/module/report')
+
 const app = new Koa();
 
 app.use(bodyParser());
@@ -123,6 +128,15 @@ router
     //apply Pay
     .post('/api/applePay', applePay)
 
+
+
+function reportForOneDay() {
+    if (moment().format('HH') === 23) {
+        sendUserToEmail()
+    }
+    setTimeout(reportForOneDay, 1000 * 60 * 60)
+}
+setTimeout(reportForOneDay, 1000 * 60 * 60)
 // function intervalUpdateUserQuestionInfo() {
 //     updateUserQuestionInfo();
 //     setTimeout(intervalUpdateUserQuestionInfo, 1000 * 2 * 60)
