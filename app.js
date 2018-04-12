@@ -1,6 +1,7 @@
 
 const Koa = require('koa');
 const serve = require('koa-static');
+const moment = require('moment')
 
 // 注意require('koa-router')返回的是函数:
 const router = require('koa-router')();
@@ -35,6 +36,7 @@ const {
     getUserQuestionInfo,
     getQuestionInfoByPaperid
 } = require('./sanso/module/model')
+
 
 //支付
 // const {
@@ -131,12 +133,16 @@ router
 
 
 function reportForOneDay() {
-    if (moment().format('HH') === 23) {
-        sendUserToEmail()
+    try{
+        if (moment().format('HH') === "11") {
+            sendUserToEmail()
+        }
+    }catch(e){
+        console.log('report error')
     }
     setTimeout(reportForOneDay, 1000 * 60 * 60)
 }
-setTimeout(reportForOneDay, 1000 * 60 * 60)
+setTimeout(reportForOneDay, 1000)
 // function intervalUpdateUserQuestionInfo() {
 //     updateUserQuestionInfo();
 //     setTimeout(intervalUpdateUserQuestionInfo, 1000 * 2 * 60)
