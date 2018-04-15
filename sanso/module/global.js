@@ -59,7 +59,7 @@ async function getPaperMenuByType(type) {
 function updateActiveUser({ user_id }) {
 	if (activeUserArray.indexOf(user_id) < 0) {
 		activeUserArray.push(user_id)
-		consoel.log(`日活跃为 ${activeUserArray.length}`)
+		console.log(`日活跃为 ${activeUserArray.length}`)
 	}
 }
 
