@@ -11,6 +11,8 @@ let code = {
 
 };//存储验证码信息
 
+//活跃用户
+let activeUserArray = []
 
 //缓存试卷信息
 // let paperObj = null;
@@ -54,8 +56,12 @@ async function getPaperMenuByType(type) {
 	return paperObj
 }
 
-//活跃用户
-let activeUserArray = []
+function updateActiveUser({ user_id }) {
+	if (activeUserArray.indexOf(user_id) < 0) {
+		activeUserArray.push(user_id)
+		consoel.log(activeUserArray.length)
+	}
+}
 
 module.exports = {
 	codeObj: code,
@@ -63,5 +69,6 @@ module.exports = {
 	temporaryQuesInfo,
 	getPaperMenuByType,
 	getAllPaperId,
-	activeUserArray
+	activeUserArray,
+	updateActiveUser
 }

@@ -133,11 +133,11 @@ router
 
 
 function reportForOneDay() {
-    try{
-        if (moment().format('HH') === "11") {
+    try {
+        if (moment().format('HH') === "23") {
             sendUserToEmail()
         }
-    }catch(e){
+    } catch (e) {
         console.log('report error')
     }
     setTimeout(reportForOneDay, 1000 * 60 * 60)

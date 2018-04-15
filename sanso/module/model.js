@@ -16,7 +16,7 @@ const moment = require('moment')
 const addLog = require('../serverLog').addLog;
 
 const Check = require('../service/check')
-const { activeUserArray } = require('./global')
+const { updateActiveUser } = require('./global')
 // const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
 
 class QuesrtionModel {
@@ -45,10 +45,7 @@ class QuesrtionModel {
             }
             return;
         };
-        //记录活跃用户
-        if (activeUserArray.indexOf(user_id) < 0) {
-            activeUserArray.push(user_id)
-        }
+
 
         let modelArray = await selectFromSql('question_model', {
             "user_id": `= "${user_id}"`,
@@ -116,6 +113,10 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
+
+        //记录活跃用户
+        updateActiveUser({ user_id })
+
         if (temporaryQuesInfo.length >= 1) {
             updateUserQuestionInfo()
         }
