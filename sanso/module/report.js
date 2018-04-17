@@ -14,12 +14,18 @@ function sendUserToEmail() {
     const date = moment().format('YYYY-MM-DD')
     getLengthOfTable('user').then(response => {
         let length = response && response[0] && response[0]['count(*)']
-        let activeLength = activeUserArray.length
-        activeUserArray.length = 0
+        let typeArray = Object.keys(activeUserArray)
         sendMail('kefu@shuatiapp.cn',
             `${date} 用户数量报告`,
-            `${date} 的用户数量为 ${length} 人,/n
-            今日活跃人数为 ${activeLength} 人`)
+            `${date} 的用户数量为,
+             ${typeArray.map(res => {
+                return `${res}有${activeUserArray[res].length} 人`
+            }).join()} `)
+
+        typeArray.forEach(res => {
+            activeUserArray[res].length = 0
+        })
+
     })
 }
 

@@ -14,7 +14,6 @@ const {
 // init()
 changetofree();
 
-
 async function init() {
     const provinceArray = ['安徽', '上海', '天津', '重庆', '河北', '山西', '内蒙古',
         '辽宁', '吉林', '黑龙江', '江苏', '浙江', '福建', '江西', '山东',
@@ -58,6 +57,4 @@ async function changetofree() {
                 "title": ` = "${title}"`
             })
     }
-
-
 }

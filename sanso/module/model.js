@@ -113,9 +113,9 @@ class QuesrtionModel {
         }
         temporaryQuesInfo.push(data);
         addLog(`存储用户id为 ${user_id} 刷题的信息 , ${data}`, 'chat')
-
+        const { paper_id } = data
         //记录活跃用户
-        updateActiveUser({ user_id })
+        await updateActiveUser({ user_id, paper_id })
 
         if (temporaryQuesInfo.length >= 1) {
             updateUserQuestionInfo()

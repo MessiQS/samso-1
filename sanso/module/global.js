@@ -12,7 +12,7 @@ let code = {
 };//存储验证码信息
 
 //活跃用户
-let activeUserArray = []
+let activeUserArray = {}
 
 //缓存试卷信息
 // let paperObj = null;
@@ -56,10 +56,15 @@ async function getPaperMenuByType(type) {
 	return paperObj
 }
 
-function updateActiveUser({ user_id }) {
-	if (activeUserArray.indexOf(user_id) < 0) {
-		activeUserArray.push(user_id)
-		console.log(`日活跃为 ${activeUserArray.length}`)
+async function updateActiveUser({ user_id, paper_id }) {
+	const paperInfo = await selectFromSql('papers', {
+		paper_id: ` = ${paper_id}`
+	})
+	const type = paperInfo[0].type
+	activeUserArray[type] = activeUserArray[type] || []
+
+	if (activeUserArray[type].indexOf(user_id) < 0) {
+		activeUserArray[type].push(user_id)
 	}
 }
 
