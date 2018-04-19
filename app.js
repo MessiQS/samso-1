@@ -12,6 +12,7 @@ const port = 8080;
 //登录模块
 const {
     login,
+    wxlogin,
     freeRegistration,
     signin,
     getCode,
@@ -90,6 +91,7 @@ router
         ctx.body = html
     })
     .post('/api/login', login)
+    .post('/api/wxlogin', wxlogin)
     //免注册用户入口
     .post('/api/freeRegistration', freeRegistration)
     .post('/api/signin', signin)
