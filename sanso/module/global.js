@@ -58,7 +58,7 @@ async function getPaperMenuByType(type) {
 
 async function updateActiveUser({ user_id, paper_id }) {
 	const paperInfo = await selectFromSql('papers', {
-		paper_id: ` = ${paper_id}`
+		id: ` = "${paper_id}"`
 	})
 	const type = paperInfo[0].type
 	activeUserArray[type] = activeUserArray[type] || []

@@ -16,8 +16,8 @@ function sendUserToEmail() {
         let length = response && response[0] && response[0]['count(*)']
         let typeArray = Object.keys(activeUserArray)
         sendMail('kefu@shuatiapp.cn',
-            `${date} 用户数量报告`,
-            `${date} 的用户数量为,
+            `${date} 用户数量报告 `,
+            `${date} 的用户数量为${length} 人 ,
              ${typeArray.map(res => {
                 return `${res}有${activeUserArray[res].length} 人`
             }).join()} `)
