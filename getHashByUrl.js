@@ -1,4 +1,5 @@
 const { Post } = require('../utils/http')
+const { startRequest } = require('./gethtml')
 var fs = require('fs');
 
 let { value } = require('./config')
@@ -101,8 +102,13 @@ async function gettwo() {
                             let titleArray = threeRes.data.as
                             console.log(titleArray)
                             if (Array.isArray(titleArray)) {
-                                aaa = aaa.concat(titleArray)
-                                fs.writeFileSync(`test1.json`, JSON.stringify(aaa))
+                                getPaperByArray({
+                                    titleArray,
+                                    skuId: sku.id.toString(),
+                                    type: val.name,//大类，会计学院
+                                    sencondType: sku.name,//初级会计职称
+                                    thirdType: threeCon.b,//会计概述
+                                })
                             }
                         }
                     }
@@ -114,5 +120,69 @@ async function gettwo() {
     console.log('done')
     fs.writeFileSync(`test.json`, JSON.stringify(aaa))
 
+}
+function getPaperByArray({
+    titleArray,
+    skuId,
+    type,
+    sencondType,
+    thirdType
+}) {
+    let path = './papers/'
+    let typePath = path + type
+    let sencondPath = typePath + '/' + sencondType
+    //新建文件夹
+    if (!fsExistsSync(typePath)) {
+        fs.mkdirSync(typePath)
+    }
+    if (!fsExistsSync(sencondPath)) {
+        fs.mkdirSync(sencondPath)
+    }
+    let quesArray = []
+    let j = 0
+    for (let i = 0; i++; i < titleArray.length) {
+        let hash = titleArray[i].e
+        let options = getOption({ hash, skuId })
+        startRequest(options, thirdType, list => {
+            quesArray = quesArray.concat(list)
+            j++
+            if (j === titleArray.length) {
+                quesArray = quesArray.sort((a, b) => a.subject - b.subject)
+                fs.writeFileSync(`${sencondPath}/${thirdType}.json`, JSON.stringify(quesArray));
+            }
+        })
+    }
+}
+
+function getOption({ hash, skuId }) {
+    const postData = JSON.stringify({
+        a: hash,
+        b: 2,
+        c: skuId,
+        d: 6
+    });
+
+    return {
+        host: "ntiku.duia.com",
+        path: `/exam`,
+        method: "POST",
+        body: postData,
+        headers: {
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+            "Cookie": cookie,
+            'Content-Length': postData.length,
+            "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+            "Content-Type": "application/json",
+        }
+    }
+}
+//检测文件或者文件夹存在 nodeJS
+function fsExistsSync(path) {
+    try {
+        fs.accessSync(path, fs.F_OK);
+    } catch (e) {
+        return false;
+    }
+    return true;
 }
 gettwo()
