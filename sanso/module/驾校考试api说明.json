@@ -1,0 +1,5 @@
+//获取paper的list
+{
+    "接口":"/api/getPaperTypeByType",
+    "参数":"user_id,type",//公务员为servant，驾校为driver，通过type区分
+}
