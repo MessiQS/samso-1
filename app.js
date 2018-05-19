@@ -26,7 +26,8 @@ const {
     getPaper,
     getSinglePaperInfo,
     getPaperType,
-    getPaperTypeByType
+    getPaperTypeByType,
+    getTypeListForPaper,
 } = require('./sanso/module/questionBank');
 
 const {
@@ -107,6 +108,7 @@ router
     .get('/api/getpaper', getPaper)
     .get('/api/papertype', getPaperType)
     .get('/api/getPaperTypeByType', getPaperTypeByType)
+    .get('/api/getTypeListForPaper',getTypeListForPaper)
     //获取单套时间
     .get('/api/getSinglePaperInfo', getSinglePaperInfo)
     //购买信息更新

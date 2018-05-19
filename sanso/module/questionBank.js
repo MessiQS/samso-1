@@ -95,7 +95,24 @@ class QuestionBank {
 			data: typeObject
 		}
 	}
+	//获取试卷大类的名称和type
+	static async getTypeListForPaper(ctx, next) {
+		const { user_id, version, system } = ctx.query;
+		const isValid = await checkHeader(ctx.request, user_id);
+		if (!isValid) {
+			ctx.response.body = {
+				type: false,
+				data: '登录错误，请重新登录'
+			}
+			return;
+		};
 
+		const paperSqlInfo = await getSql('select distinct type,ctype from papers');
+		ctx.response.body = {
+			type: true,
+			data: paperSqlInfo
+		}
+	}
 	//获取试卷详情
 	static async getPaperTypeByType(ctx, next) {
 		const { user_id, version, system, type } = ctx.query;
