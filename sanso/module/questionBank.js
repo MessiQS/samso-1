@@ -96,7 +96,7 @@ class QuestionBank {
 		}
 	}
 	//获取试卷大类的名称和type
-	static async getTypeListForPaper(ctx, next) {
+	static async getSecondType(ctx, next) {
 		const { user_id, version, system } = ctx.query;
 		const isValid = await checkHeader(ctx.request, user_id);
 		if (!isValid) {
@@ -107,12 +107,58 @@ class QuestionBank {
 			return;
 		};
 
-		const paperSqlInfo = await getSql('select distinct type,ctype from papers');
+		const paperSqlInfo = await getSql('select distinct type,ctype,secondType from papers');
+		let returnObject = {}
+		paperSqlInfo.forEach(res => {
+			const { ctype, secondType } = res
+			returnObject[ctype] = returnObject[ctype] || []
+			returnObject[ctype].push(secondType)
+		})
+		ctx.response.body = {
+			type: true,
+			data: returnObject
+		}
+	}
+
+	//获取试卷大类的名称和type
+	static async getProvinceBySecondType(ctx, next) {
+		const { user_id, version, secondType } = ctx.query;
+		const isValid = await checkHeader(ctx.request, user_id);
+		if (!isValid) {
+			ctx.response.body = {
+				type: false,
+				data: '登录错误，请重新登录'
+			}
+			return;
+		};
+
+		const paperSqlInfo = await getSql('select distinct province from papers where secondType = '
+			+ `"${secondType}"`);
 		ctx.response.body = {
 			type: true,
 			data: paperSqlInfo
 		}
 	}
+	//根据省份获取 title
+	static async getTitleByProvince(ctx, next) {
+		const { user_id, version, province } = ctx.query;
+		const isValid = await checkHeader(ctx.request, user_id);
+		if (!isValid) {
+			ctx.response.body = {
+				type: false,
+				data: '登录错误，请重新登录'
+			}
+			return;
+		};
+
+		const paperSqlInfo = await getSql('select distinct title from papers where province = '
+			+ `"${province}"`);
+		ctx.response.body = {
+			type: true,
+			data: paperSqlInfo
+		}
+	}
+
 	//获取试卷详情
 	static async getPaperTypeByType(ctx, next) {
 		const { user_id, version, system, type } = ctx.query;

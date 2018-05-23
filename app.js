@@ -27,7 +27,9 @@ const {
     getSinglePaperInfo,
     getPaperType,
     getPaperTypeByType,
-    getTypeListForPaper,
+    getSecondType,
+    getProvinceBySecondType,
+    getTitleByProvince,
 } = require('./sanso/module/questionBank');
 
 const {
@@ -108,7 +110,13 @@ router
     .get('/api/getpaper', getPaper)
     .get('/api/papertype', getPaperType)
     .get('/api/getPaperTypeByType', getPaperTypeByType)
-    .get('/api/getTypeListForPaper',getTypeListForPaper)
+    //三步走
+    //获取大类和secondType
+    .get('/api/getSecondType',getSecondType)
+    //通过secondeType获取Privince
+    .get('/api/getProvinceBySecondType',getProvinceBySecondType)
+    //通过Privince获取Title
+    .get('/api/getTitleByProvince',getTitleByProvince)
     //获取单套时间
     .get('/api/getSinglePaperInfo', getSinglePaperInfo)
     //购买信息更新
