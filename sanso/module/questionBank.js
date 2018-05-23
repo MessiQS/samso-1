@@ -136,7 +136,7 @@ class QuestionBank {
 			+ `"${secondType}"`);
 		ctx.response.body = {
 			type: true,
-			data: paperSqlInfo
+			data: paperSqlInfo.map(res => res.province)
 		}
 	}
 	//根据省份获取 title
@@ -151,11 +151,14 @@ class QuestionBank {
 			return;
 		};
 
-		const paperSqlInfo = await getSql('select distinct title from papers where province = '
+		const paperSqlInfo = await getSql('select distinct title,id from papers where province = '
 			+ `"${province}"`);
 		ctx.response.body = {
 			type: true,
-			data: paperSqlInfo
+			data: paperSqlInfo.map(res => ({
+				...res,
+				paper_id: res.id
+			}))
 		}
 	}
 
