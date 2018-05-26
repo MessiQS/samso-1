@@ -28,7 +28,7 @@ const {
     getPaperType,
     getPaperTypeByType,
     getSecondType,
-    getProvinceBySecondType,
+    // getProvinceBySecondType,
     getTitleByProvince,
 } = require('./sanso/module/questionBank');
 
@@ -114,7 +114,7 @@ router
     //获取大类和secondType
     .get('/api/getSecondType',getSecondType)
     //通过secondeType获取Privince
-    .get('/api/getProvinceBySecondType',getProvinceBySecondType)
+    // .get('/api/getProvinceBySecondType',getProvinceBySecondType)
     //通过Privince获取Title
     .get('/api/getTitleByProvince',getTitleByProvince)
     //获取单套时间
