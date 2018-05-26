@@ -124,9 +124,18 @@ class QuestionBank {
 				content:secondTypeCacheObje[secondType]
 			})
 		})
+
+		let returnArray = []
+		for(let key in returnObject){
+			returnArray.push({
+				type:key,
+				content:returnObject[key]
+			})
+		}
+
 		ctx.response.body = {
 			type: true,
-			data: returnObject
+			data: returnArray
 		}
 	}
 
