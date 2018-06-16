@@ -108,37 +108,56 @@ class QuestionBank {
 		};
 
 		const paperSqlInfo = await getSql('select distinct type,ctype,secondType from papers');
+		const provinceArray = await getSql('select distinct secondType,province from papers');
+		const secondTypeCacheObje = {}
+		provinceArray.forEach(res => {
+			const {secondType,province} = res
+			secondTypeCacheObje[secondType] = secondTypeCacheObje[secondType] || []
+			secondTypeCacheObje[secondType].push(province)
+		})
 		let returnObject = {}
 		paperSqlInfo.forEach(res => {
 			const { ctype, secondType } = res
 			returnObject[ctype] = returnObject[ctype] || []
-			returnObject[ctype].push(secondType)
+			returnObject[ctype].push({
+				secondType,
+				content:secondTypeCacheObje[secondType]
+			})
 		})
+
+		let returnArray = []
+		for(let key in returnObject){
+			returnArray.push({
+				type:key,
+				content:returnObject[key]
+			})
+		}
+
 		ctx.response.body = {
 			type: true,
-			data: returnObject
+			data: returnArray
 		}
 	}
 
 	//获取试卷大类的名称和type
-	static async getProvinceBySecondType(ctx, next) {
-		const { user_id, version, secondType } = ctx.query;
-		const isValid = await checkHeader(ctx.request, user_id);
-		if (!isValid) {
-			ctx.response.body = {
-				type: false,
-				data: '登录错误，请重新登录'
-			}
-			return;
-		};
+	// static async getProvinceBySecondType(ctx, next) {
+	// 	const { user_id, version, secondType } = ctx.query;
+	// 	const isValid = await checkHeader(ctx.request, user_id);
+	// 	if (!isValid) {
+	// 		ctx.response.body = {
+	// 			type: false,
+	// 			data: '登录错误，请重新登录'
+	// 		}
+	// 		return;
+	// 	};
 
-		const paperSqlInfo = await getSql('select distinct province from papers where secondType = '
-			+ `"${secondType}"`);
-		ctx.response.body = {
-			type: true,
-			data: paperSqlInfo.map(res => res.province)
-		}
-	}
+	// 	const paperSqlInfo = await getSql('select distinct province from papers where secondType = '
+	// 		+ `"${secondType}"`);
+	// 	ctx.response.body = {
+	// 		type: true,
+	// 		data: paperSqlInfo.map(res => res.province)
+	// 	}
+	// }
 	//根据省份获取 title
 	static async getTitleByProvince(ctx, next) {
 		const { user_id, version, province } = ctx.query;
