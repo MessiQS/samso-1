@@ -56,18 +56,6 @@ async function getPaperMenuByType(type) {
 	return paperObj
 }
 
-async function updateActiveUser({ user_id, paper_id }) {
-	const paperInfo = await selectFromSql('papers', {
-		id: ` = "${paper_id}"`
-	})
-	const type = paperInfo[0].type
-	activeUserArray[type] = activeUserArray[type] || []
-
-	if (activeUserArray[type].indexOf(user_id) < 0) {
-		activeUserArray[type].push(user_id)
-	}
-}
-
 module.exports = {
 	codeObj: code,
 	provinceCache,//缓存城市
@@ -75,5 +63,4 @@ module.exports = {
 	getPaperMenuByType,
 	getAllPaperId,
 	activeUserArray,
-	updateActiveUser
 }
