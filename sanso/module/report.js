@@ -11,9 +11,8 @@ const {
 const {
     activeUserArray
 } = require('./global')
-const moment = require('moment')
 
-await function sendUserToEmail() {
+async function sendUserToEmail() {
     const date = moment().format('YYYY-MM-DD')
     let typeArray = Object.keys(activeUserArray)
     const response = await getLengthOfTable('user')
