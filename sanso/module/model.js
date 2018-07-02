@@ -16,7 +16,7 @@ const moment = require('moment')
 const addLog = require('../serverLog').addLog;
 
 const Check = require('../service/check')
-const { updateActiveUser } = require('./global')
+const { updateActiveUser } = require('./report')
 // const { updateDataModel, updateBankModel, getOldDataModel, getOldBankModel, dealWithData } = require('./model.controller')
 
 class QuesrtionModel {
