@@ -22,7 +22,7 @@ async function sendUserToEmail() {
         await insertToSql('user_login_cache', {
             date_time: moment().format('YYYY-MM-DD'),
             number: typeArray.reduce((left, right) => {
-                return left + Number(activeUserArray[right])
+                return left + Number(activeUserArray[right].length)
             }, 0),
             user_length: length,
             info: JSON.stringify(activeUserArray)
