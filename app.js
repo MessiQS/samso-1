@@ -96,6 +96,7 @@ router
     })
     .post('/api/login', login)
     .post('/api/wxlogin', wxlogin)
+    .post('/api/appWxLogin', appWxLogin)
     //免注册用户入口
     .post('/api/freeRegistration', freeRegistration)
     .post('/api/signin', signin)

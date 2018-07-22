@@ -153,13 +153,12 @@ class Sign {
 		let row = await selectFromSql('user', {
 			'openid': `="${openid}"`
 		});
-
 		if (row && row[0]) {
 			//已经有账号
 			let uid = getUid();
 			let updatesql = await updateToSql('user', {
 				token: uid,
-				session_key: access_token
+				session_key: ''
 			}, {
 					'openid': `="${openid}"`
 				});
@@ -191,7 +190,7 @@ class Sign {
 				account: account,
 				password: account, //MD5加密密码
 				user_id,
-				session_key: access_token,
+				session_key: '',
 				token: uid,
 				openid
 			};
