@@ -15,7 +15,14 @@ const {
 } = new sqlFormat();
 const addLog = require('../serverlog').addLog;
 const sendCode = require('../service/sendCode')
-const { appid, secret } = require('../config/weproduct')
+const {
+	//这两个是小程序的
+	appid,
+	secret,
+	//下面两个是app的
+	shansuoAppId,
+	shansuoSecret,
+} = require('../config/weproduct')
 
 class Sign {
 	//登录
@@ -63,7 +70,7 @@ class Sign {
 			};
 		}
 	};
-	//微信登录
+	//小程序微信登录
 	static async wxlogin(ctx, next) {
 		const { code } = ctx.request.body;
 		const host = "https://api.weixin.qq.com/sns/jscode2session"
@@ -131,6 +138,75 @@ class Sign {
 			};
 		}
 	}
+	//app微信登录
+	static async appWxLogin(ctx, next) {
+		const { code } = ctx.request.body;
+		const host = `https://api.weixin.qq.com/sns/oauth2/access_token`
+		const params = {
+			appid: shansuoAppId,
+			secret: shansuoSecret,
+			code,
+			grant_type: "authorization_code"
+		}
+		const response = await https.get(host, params)
+		const { access_token, openid } = response
+		let row = await selectFromSql('user', {
+			'openid': `="${openid}"`
+		});
+
+		if (row && row[0]) {
+			//已经有账号
+			let uid = getUid();
+			let updatesql = await updateToSql('user', {
+				token: uid,
+				session_key: access_token
+			}, {
+					'openid': `="${openid}"`
+				});
+			//更新token成功
+			if (updatesql) {
+				let userInfo,
+					user_id = row[0].user_id;
+				userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
+				ctx.response.body = {
+					'type': true,
+					'data': {
+						'token': uid,
+						user_id,
+						userInfo
+					}
+				};
+			} else {
+				ctx.response.body = {
+					'type': false,
+					'data': '登录失败请重试'
+				};
+			}
+		} else {
+			let user_id = await setNewUserId();
+			let uid = getUid();
+			let account = new Date().getTime() + getUid().slice(0, 3)
+			let data = {
+				name: account,
+				account: account,
+				password: account, //MD5加密密码
+				user_id,
+				session_key: access_token,
+				token: uid,
+				openid
+			};
+			await insertToSql('user', data);
+			ctx.response.body = {
+				'type': true,
+				'data': {
+					'token': uid,
+					user_id,
+					userInfo: {}
+				}
+			};
+		}
+	}
+
 
 	static async freeRegistration(ctx, next) {
 		const { account, password } = ctx.request.body;

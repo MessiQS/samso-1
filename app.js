@@ -13,6 +13,7 @@ const port = 8080;
 const {
     login,
     wxlogin,
+    appWxLogin,
     freeRegistration,
     signin,
     getCode,
