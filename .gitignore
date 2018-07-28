@@ -8,6 +8,7 @@
 /logs
 /mysqlupdate
 packjson-lock.json
+yarn.lock
 version/PotPlayer_1.7.7145.0_Setup.exe
 version/
 

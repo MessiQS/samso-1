@@ -165,14 +165,16 @@ class Sign {
 			//更新token成功
 			if (updatesql) {
 				let userInfo,
-					user_id = row[0].user_id;
+					user_id = row[0].user_id,
+					account = row[0].account
 				userInfo = row[0].data_info ? JSON.parse(row[0].data_info) : {};
 				ctx.response.body = {
 					'type': true,
 					'data': {
 						'token': uid,
 						user_id,
-						userInfo
+						userInfo,
+						account,
 					}
 				};
 			} else {
@@ -200,6 +202,7 @@ class Sign {
 				'data': {
 					'token': uid,
 					user_id,
+					account,
 					userInfo: {}
 				}
 			};
