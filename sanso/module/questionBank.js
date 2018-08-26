@@ -35,18 +35,27 @@ class QuestionBank {
 			}
 			return;
 		}
+		let { title, ctype } = provinceObjectCache[paperId]
 		// checkBuy({ user_id, paperId })
-		const questionArray = await selectFromSql('question_banks', {
-			'FIND_IN_SET': '("' + provinceObjectCache[paperId].title + '",`title`)',
+		let questionArray = await selectFromSql('question_banks', {
+			'FIND_IN_SET': '("' + title + '",`title`)',
 			'ORDER BY': ` question_number`
 		});
-		if (!questionArray) {
+		//英语大系列忽略提示
+		let ignoreWarning = ctype === '英语'
+		if (!questionArray || !Array.isArray(questionArray)) {
 			ctx.response.body = {
 				type: false,
 				data: '发生错误，请重试'
 			}
 			return;
 		};
+
+		questionArray = questionArray.map(res => ({
+			...res,
+			ignoreWarning
+		}))
+
 		ctx.response.body = {
 			type: true,
 			data: questionArray
@@ -111,7 +120,7 @@ class QuestionBank {
 		const provinceArray = await getSql('select distinct secondType,province from papers');
 		const secondTypeCacheObje = {}
 		provinceArray.forEach(res => {
-			const {secondType,province} = res
+			const { secondType, province } = res
 			secondTypeCacheObje[secondType] = secondTypeCacheObje[secondType] || []
 			secondTypeCacheObje[secondType].push(province)
 		})
@@ -121,16 +130,21 @@ class QuestionBank {
 			returnObject[ctype] = returnObject[ctype] || []
 			returnObject[ctype].push({
 				secondType,
-				content:secondTypeCacheObje[secondType]
+				content: secondTypeCacheObje[secondType]
 			})
 		})
 
 		let returnArray = []
-		for(let key in returnObject){
-			returnArray.push({
-				type:key,
-				content:returnObject[key]
-			})
+		for (let key in returnObject) {
+			let ctypeObject = {
+				type: key,
+				content: returnObject[key]
+			}
+			if (key === '英语') {
+				returnArray.unshift(ctypeObject)
+			} else {
+				returnArray.push(ctypeObject)
+			}
 		}
 
 		ctx.response.body = {
