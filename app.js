@@ -48,7 +48,9 @@ const {
 const {
     adminLogin,
     getErrorQuestion,
-    checkAdminToken
+    checkAdminToken,
+    setErrorToTrue,
+    fixedErrorQuestion
 } = require('./sanso/module/adminController')
 
 //支付
@@ -154,8 +156,10 @@ router
     //adminController
     .post('/api/adminLogin', adminLogin) //管理员登录
     .get('/api/getErrorQuestion', getErrorQuestion) //获取错题
-    .get('/api/checkAdminToken', checkAdminToken) //获取错题
-
+    .get('/api/checkAdminToken', checkAdminToken) //检测登录态
+    .get('/api/setErrorToTrue',setErrorToTrue) //确认题目本身没问题
+    .post('/api/fixedErrorQuestion', fixedErrorQuestion) //修复题目
+    
 
 function reportForOneDay() {
     try {
