@@ -20,7 +20,7 @@ class groupFunctionArray {
             pool.getConnection(function (err, connection) {
                 if (err) {
                     addLog('链接数据库错误  ' + selectSQL);
-                    resolve('connectError');
+                    resolve(undefined);
                 };
                 connection.query(selectSQL, (error, rows) => {
                     if (error) {

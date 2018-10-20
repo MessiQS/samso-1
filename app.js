@@ -7,6 +7,8 @@ const moment = require('moment')
 const router = require('koa-router')();
 //解析post
 const bodyParser = require('koa-bodyparser');
+//跨域
+var cors = require('koa-cors');
 //端口
 const port = 8080;
 //登录模块
@@ -43,6 +45,12 @@ const {
 } = require('./sanso/module/model')
 
 
+const {
+    adminLogin,
+    getErrorQuestion,
+    checkAdminToken
+} = require('./sanso/module/adminController')
+
 //支付
 // const {
 //     wechatPay
@@ -74,11 +82,11 @@ const {
 
 const app = new Koa();
 
+app.use(cors())
 app.use(bodyParser());
 // add router middleware:
 app.use(router.routes());
 app.use(serve(__dirname + '/static'), { extensions: ['html'] });
-
 router
     .get('/', async (ctx, next) => {
         // 当GET请求时候返回表单页面
@@ -114,11 +122,11 @@ router
     .get('/api/getPaperTypeByType', getPaperTypeByType)
     //三步走
     //获取大类和secondType
-    .get('/api/getSecondType',getSecondType)
+    .get('/api/getSecondType', getSecondType)
     //通过secondeType获取Privince
     // .get('/api/getProvinceBySecondType',getProvinceBySecondType)
     //通过Privince获取Title
-    .get('/api/getTitleByProvince',getTitleByProvince)
+    .get('/api/getTitleByProvince', getTitleByProvince)
     //获取单套时间
     .get('/api/getSinglePaperInfo', getSinglePaperInfo)
     //购买信息更新
@@ -143,7 +151,10 @@ router
     .post('/api/pingHook', pingHook)
     //apply Pay
     .post('/api/applePay', applePay)
-
+    //adminController
+    .post('/api/adminLogin', adminLogin) //管理员登录
+    .get('/api/getErrorQuestion', getErrorQuestion) //获取错题
+    .get('/api/checkAdminToken', checkAdminToken) //获取错题
 
 
 function reportForOneDay() {
